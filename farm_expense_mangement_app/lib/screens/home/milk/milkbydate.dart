@@ -1,5 +1,4 @@
 import 'package:farm_expense_mangement_app/screens/home/milkavgpage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/milk.dart';
@@ -15,22 +14,22 @@ class MilkByDatePage extends StatefulWidget {
 }
 
 class _MilkByDatePageState extends State<MilkByDatePage> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-  late DatabaseForMilk db;
-
   List<Milk> _allMilkInDate = [];
   List<Milk> _filteredMilk = [];
 
   @override
   void initState() {
     super.initState();
-    db = DatabaseForMilk(uid);
     _fetchAllMilk();
   }
 
+  Future deleteMilkOnDate() async {
+    await deleteMilkByDateFromDatabase(widget.dateOfMilk!);
+    await deleteMilkFromDatabase(widget.dateOfMilk!);
+  }
+
   void _deleteAllMilkOnDate() {
-    db.deleteAllMilkRecords(widget.dateOfMilk!);
+    deleteMilkOnDate();
 
     Navigator.pop(context);
     Navigator.pushReplacement(
@@ -39,10 +38,9 @@ class _MilkByDatePageState extends State<MilkByDatePage> {
 
   Future<void> _fetchAllMilk() async {
     final DateTime dateTime = widget.dateOfMilk!;
-    final snapshot = await db.infoFromServerAllMilk(dateTime);
+    final snapshot = await getMilkFromDatabase(dateTime);
     setState(() {
-      _allMilkInDate =
-          snapshot.docs.map((doc) => Milk.fromFireStore(doc, null)).toList();
+      _allMilkInDate = snapshot;
       _filteredMilk = _allMilkInDate;
     });
   }
@@ -373,10 +371,6 @@ class EditMilkByDate extends StatefulWidget {
 }
 
 class _EditMilkByDateState extends State<EditMilkByDate> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-  late DatabaseForMilk db;
-  late DatabaseForMilkByDate dbByDate;
 
   double? milkInMorning;
   double? milkInEvening;
@@ -384,29 +378,21 @@ class _EditMilkByDateState extends State<EditMilkByDate> {
   @override
   void initState() {
     super.initState();
-    db = DatabaseForMilk(uid);
-    dbByDate = DatabaseForMilkByDate(uid);
     milkInMorning = widget.data.morning;
     milkInEvening = widget.data.evening;
   }
 
   void _editMilkDetail(Milk milk) async {
-    await db.infoToServerMilk(milk);
+    await updateMilkInDatabase(milk);
     final MilkByDate milkByDate;
-    final snapshot = await dbByDate.infoFromServerMilk(milk.dateOfMilk!);
-    if (snapshot.exists) {
-      milkByDate = MilkByDate.fromFireStore(snapshot, null);
-    } else {
-      milkByDate = MilkByDate(dateOfMilk: milk.dateOfMilk);
-      await dbByDate.infoToServerMilk(milkByDate);
-    }
+    final snapshot = await getMilkByDateFromDatabase(milk.dateOfMilk!);
+    milkByDate = snapshot;
     final double totalMilk = milkByDate.totalMilk +
         milk.morning +
         milk.evening -
         widget.data.evening -
         widget.data.morning;
-    await dbByDate.infoToServerMilk(
-        MilkByDate(dateOfMilk: milk.dateOfMilk, totalMilk: totalMilk));
+    await updateMilkByDateInDatabase(MilkByDate(dateOfMilk: milk.dateOfMilk, totalMilk: totalMilk));
   }
 
   @override

@@ -13,8 +13,7 @@ class Sale {
     return Sale(
       name: data?['name'],
       value: data?['value'],
-      saleOnMonth:
-          (data?['saleOnMonth'] != null) ? data!['saleOnMonth'].toDate() : null,
+      saleOnMonth:DateTime.fromMillisecondsSinceEpoch(data?['saleOnMonth']),
     );
   }
 
@@ -22,8 +21,7 @@ class Sale {
     return {
       'name': name,
       'value': value,
-      'saleOnMonth':
-          (saleOnMonth != null) ? Timestamp.fromDate(saleOnMonth!) : null
+      'saleOnMonth': (saleOnMonth != null) ? saleOnMonth?.millisecondsSinceEpoch : 0
     };
   }
 }
@@ -42,9 +40,7 @@ class Expense {
     return Expense(
       name: data?['name'],
       value: data?['value'],
-      expenseOnMonth: (data?['expenseOnMonth'] != null)
-          ? data!['expenseOnMonth'].toDate()
-          : null,
+      expenseOnMonth: DateTime.fromMillisecondsSinceEpoch(data?['expenseOnMonth']),
     );
   }
 
@@ -52,8 +48,7 @@ class Expense {
     return {
       'name': name,
       'value': value,
-      'expenseOnMonth':
-          (expenseOnMonth != null) ? Timestamp.fromDate(expenseOnMonth!) : null
+      'expenseOnMonth':(expenseOnMonth != null) ? expenseOnMonth?.millisecondsSinceEpoch : 0
     };
   }
 }

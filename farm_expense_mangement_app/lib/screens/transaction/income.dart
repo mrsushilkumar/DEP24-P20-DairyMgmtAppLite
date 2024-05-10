@@ -1,6 +1,4 @@
-
 import 'package:farm_expense_mangement_app/screens/transaction/transactionpage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/transaction.dart';
@@ -15,11 +13,6 @@ class AddIncome extends StatefulWidget {
 }
 
 class _AddIncomeState extends State<AddIncome> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-
-  late DatabaseForSale dbSale;
-
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _amountTextController = TextEditingController();
@@ -118,11 +111,10 @@ class _AddIncomeState extends State<AddIncome> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    dbSale = DatabaseForSale(uid: uid);
   }
 
-  void _addIncome(Sale data) {
-    dbSale.infoToServerSale(data);
+  void _addIncome(Sale data) async {
+    await addSaleInDatabase(data);
 
     widget.onSubmit;
   }
@@ -160,13 +152,12 @@ class _AddIncomeState extends State<AddIncome> {
           padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
           child: Column(
             children: [
-
               const SizedBox(
                 height: 5,
               ),
-
-              const SizedBox(height: 10,),
-
+              const SizedBox(
+                height: 10,
+              ),
               Form(
                 key: _formKey,
                 child: Expanded(
@@ -199,7 +190,6 @@ class _AddIncomeState extends State<AddIncome> {
                           border: OutlineInputBorder(),
                           filled: true,
                           fillColor: Color.fromRGBO(240, 255, 255, 1),
-
                         ),
                       ),
                     ),
@@ -213,7 +203,6 @@ class _AddIncomeState extends State<AddIncome> {
                           border: OutlineInputBorder(),
                           filled: true,
                           fillColor: Color.fromRGBO(240, 255, 255, 1),
-
                         ),
                         items: sourceOptions.map((String source) {
                           return DropdownMenuItem<String>(
@@ -231,24 +220,20 @@ class _AddIncomeState extends State<AddIncome> {
 
                     if (_selectedCategory == 'Other')
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(1, 0, 1, 30),
-                        child: TextFormField(
-                          controller: _categoryTextController,
-                          decoration: const InputDecoration(
-                            labelText: 'Enter Category',
-                            border: OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Color.fromRGBO(240, 255, 255, 1),
-
-                          )
-                        )
-                      ),
+                          padding: const EdgeInsets.fromLTRB(1, 0, 1, 30),
+                          child: TextFormField(
+                              controller: _categoryTextController,
+                              decoration: const InputDecoration(
+                                labelText: 'Enter Category',
+                                border: OutlineInputBorder(),
+                                filled: true,
+                                fillColor: Color.fromRGBO(240, 255, 255, 1),
+                              ))),
 
                     // SizedBox(height: 10),
                     Container(
                       alignment: Alignment.center,
                       child: ElevatedButton(
-
                         onPressed: () {
                           final data = Sale(
                               name: (_selectedCategory.toString() != 'Other')
@@ -259,9 +244,12 @@ class _AddIncomeState extends State<AddIncome> {
                                   DateTime.tryParse(_dateController.text));
                           _addIncome(data);
                           Navigator.pop(context);
-    Navigator.pushReplacement(
-    context, MaterialPageRoute(builder: (context) => const TransactionPage(showIncome: true,)));
-
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const TransactionPage(
+                                        showIncome: true,
+                                      )));
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -282,11 +270,9 @@ class _AddIncomeState extends State<AddIncome> {
                             fontSize: 15,
                           ),
                         ),
-    ),
                       ),
-
-                  ]
-    ),
+                    ),
+                  ]),
                 ),
               ),
             ],

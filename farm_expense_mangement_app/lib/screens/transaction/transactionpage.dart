@@ -1,7 +1,6 @@
 import 'package:farm_expense_mangement_app/models/transaction.dart';
 import 'package:farm_expense_mangement_app/screens/transaction/edittransaction.dart';
 import 'package:farm_expense_mangement_app/services/database/transactiondatabase.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'expenses.dart';
@@ -16,11 +15,7 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  late DatabaseForSale dbSale;
-  late DatabaseForExpense dbExpanse;
 
   bool showIncome = true;
   List<Sale> incomeTransactions = [];
@@ -30,10 +25,9 @@ class _TransactionPageState extends State<TransactionPage> {
   DateTime? selectedEndDate;
 
   Future<void> _fetchIncome() async {
-    final snapshot = await dbSale.infoFromServerAllTransaction();
+    final snapshot = await getAllSaleFromDatabase();
     setState(() {
-      incomeTransactions = snapshot.docs
-          .map((doc) => Sale.fromFireStore(doc, null))
+      incomeTransactions = snapshot
           .where((sale) =>
       (selectedStartDate == null ||
           sale.saleOnMonth!.isAfter(selectedStartDate!)) &&
@@ -44,10 +38,9 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<void> _fetchExpense() async {
-    final snapshot = await dbExpanse.infoFromServerAllTransaction();
+    final snapshot = await getAllExpenseFromDatabase();
     setState(() {
-      expenseTransactions = snapshot.docs
-          .map((doc) => Expense.fromFireStore(doc, null))
+      expenseTransactions = snapshot
           .where((expense) =>
       (selectedStartDate == null ||
           expense.expenseOnMonth!.isAfter(selectedStartDate!)) &&
@@ -60,8 +53,6 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   void initState() {
     super.initState();
-    dbSale = DatabaseForSale(uid: uid);
-    dbExpanse = DatabaseForExpense(uid: uid);
     showIncome = widget.showIncome; // Set showIncome based on the parameter
     _fetchIncome();
     _fetchExpense();
@@ -252,8 +243,8 @@ class _TransactionPageState extends State<TransactionPage> {
           : null,
     );
     if (picked != null) {
-      selectedStartDate = picked.start;
-      selectedEndDate = picked.end;
+      selectedStartDate = picked.start.subtract(const Duration(days: 1));
+      selectedEndDate = picked.end.add(const Duration(days: 1));
       _fetchIncome();
       _fetchExpense();
     }

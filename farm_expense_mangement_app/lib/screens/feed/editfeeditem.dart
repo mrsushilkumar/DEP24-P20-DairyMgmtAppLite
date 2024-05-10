@@ -5,9 +5,8 @@ import 'package:farm_expense_mangement_app/services/database/feeddatabase.dart';
 
 class EditFeedItemPage extends StatefulWidget {
   final Feed feed;
-  final String uid;
 
-  const EditFeedItemPage({super.key, required this.feed, required this.uid});
+  const EditFeedItemPage({super.key, required this.feed});
 
   @override
   State<EditFeedItemPage> createState() => _EditFeedItemPageState();
@@ -21,7 +20,6 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
   late TextEditingController _stockController;
   late DateTime _expiryDate;
 
-  late DatabaseServicesForFeed _dbService;
 
   @override
   void initState() {
@@ -35,7 +33,6 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
         TextEditingController(text: widget.feed.quantity.toString());
     _expiryDate = widget.feed.expiryDate ?? DateTime.now();
 
-    _dbService = DatabaseServicesForFeed(widget.uid);
   }
 
   @override
@@ -57,12 +54,12 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
         expiryDate: _expiryDate,
       );
 
-      await _dbService.infoToServerFeed(updatedFeed);
+      await updateFeedInDatabase(updatedFeed);
     }
   }
 
   Future<void> deleteFeedDatabase() async {
-    await _dbService.deleteFeed(_itemNameController.text);
+    await deleteFeedFromDatabase(widget.feed);
   }
 
   void _deleteFeed(BuildContext context) {
@@ -73,11 +70,11 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
   }
 
   void _submitForm(BuildContext context) {
-    editFeedOnDatabase();
-
-    Navigator.pop(context);
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const FeedPage()));
+    // editFeedOnDatabase();
+    //
+    // Navigator.pop(context);
+    // Navigator.pushReplacement(
+    //     context, MaterialPageRoute(builder: (context) => const FeedPage()));
 
     // Check if the expiry date is in the past
     if (_expiryDate.isBefore(DateTime.now())) {

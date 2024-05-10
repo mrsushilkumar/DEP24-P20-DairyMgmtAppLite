@@ -1,80 +1,62 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:farm_expense_mangement_app/models/transaction.dart';
+import 'package:farm_expense_mangement_app/services/initializelocaldatabase.dart';
+import 'package:sqflite/sqflite.dart';
 
-class DatabaseForSale {
-  String uid;
-  DatabaseForSale({required this.uid});
-
-  Future<QuerySnapshot<Map<String, dynamic>>>
-      infoFromServerAllTransaction() async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    return await db
-        .collection('User')
-        .doc(uid)
-        .collection('Sale')
-        .orderBy('saleOnMonth', descending: true)
-        .get();
-  }
-
-  Future<void> infoToServerSale(Sale sale) async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    return await db
-        .collection('User')
-        .doc(uid)
-        .collection('Sale')
-        .doc("${sale.name.replaceAll(' ', '')}D${sale.saleOnMonth!.day}M${sale.saleOnMonth!.month}Y${sale.saleOnMonth!.year}")
-        .set(sale.toFireStore());
-  }
-
-  Future<void> deleteFromServer(Sale sale) async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    return await db
-        .collection('User')
-        .doc(uid)
-        .collection('Sale')
-        .doc("${sale.name.replaceAll(' ', '')}D${sale.saleOnMonth!.day}M${sale.saleOnMonth!.month}Y${sale.saleOnMonth!.year}")
-        .delete();
-  }
+Future<List<Sale>> getAllSaleFromDatabase() async {
+  final Database db = await initDatabase();
+  final List<Map<String,dynamic>> items = await db.query('sales');
+  return List.generate(items.length, (index) {
+    return Sale(
+        name: items[index]['name'],
+        value: items[index]['value'],
+        saleOnMonth: DateTime.fromMillisecondsSinceEpoch(items[index]['saleOnMonth'])
+    );
+  });
 }
 
-class DatabaseForExpense {
-  String uid;
-  DatabaseForExpense({required this.uid});
+Future addSaleInDatabase(Sale sale) async {
+  final Database db = await initDatabase();
+  return db.insert('sales', sale.toFireStore());
+}
 
-  Future<QuerySnapshot<Map<String, dynamic>>>
-      infoFromServerAllTransaction() async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
+Future updateSaleInDatabase(Sale sale) async {
+  final Database db = await initDatabase();
+  return db.update('sales', sale.toFireStore(),where: 'name =? AND saleOnMonth =?',whereArgs: [sale.name,sale.saleOnMonth?.millisecondsSinceEpoch]);
 
-    return await db
-        .collection('User')
-        .doc(uid)
-        .collection('Expense')
-        .orderBy('expenseOnMonth', descending: true)
-        .get();
-  }
+}
 
-  Future<void> infoToServerExpanse(Expense expense) async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
+Future deleteSaleFromDatabase (Sale sale) async {
+  final Database db = await initDatabase();
+  return db.delete('sales',where: 'name =? AND saleOnMonth =?',whereArgs: [sale.name,sale.saleOnMonth?.millisecondsSinceEpoch]);
+}
 
-    return await db
-        .collection('User')
-        .doc(uid)
-        .collection('Expense')
-        .doc("${expense.name.replaceAll(' ', '')}D${expense.expenseOnMonth!.day}M${expense.expenseOnMonth!.month}Y${expense.expenseOnMonth!.year}")
-        .set(expense.toFireStore());
-  }
 
-  Future<void> deleteFromServer(Expense expense) async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
 
-    return await db
-        .collection('User')
-        .doc(uid)
-        .collection('Expense')
-        .doc("${expense.name.replaceAll(' ', '')}D${expense.expenseOnMonth!.day}M${expense.expenseOnMonth!.month}Y${expense.expenseOnMonth!.year}")
-        .delete();
-  }
+Future<List<Expense>> getAllExpenseFromDatabase() async {
+  final Database db = await initDatabase();
+  final List<Map<String,dynamic>> items = await db.query('expenses');
+  return List.generate(items.length, (index) {
+    return Expense(
+        name: items[index]['name'],
+        value: items[index]['value'],
+        expenseOnMonth: DateTime.fromMillisecondsSinceEpoch(items[index]['expenseOnMonth'])
+    );
+  });
+}
+
+Future addExpenseInDatabase(Expense expense) async {
+  final Database db = await initDatabase();
+  return db.insert('expenses', expense.toFireStore());
+}
+
+Future updateExpenseInDatabase(Expense expense) async {
+  final Database db = await initDatabase();
+  return db.update('expenses', expense.toFireStore(),where: 'name =? AND expenseOnMonth =?',whereArgs: [expense.name,expense.expenseOnMonth?.millisecondsSinceEpoch]);
+
+}
+
+Future deleteExpenseFromDatabase (Expense expense) async {
+  final Database db = await initDatabase();
+  return db.delete('expenses',where: 'name =? AND expenseOnMonth =?',whereArgs: [expense.name,expense.expenseOnMonth?.millisecondsSinceEpoch]);
 }

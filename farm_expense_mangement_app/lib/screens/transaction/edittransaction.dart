@@ -3,7 +3,6 @@
 import 'package:farm_expense_mangement_app/models/transaction.dart';
 import 'package:farm_expense_mangement_app/screens/transaction/transactionpage.dart';
 import 'package:farm_expense_mangement_app/services/database/transactiondatabase.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class EditTransaction extends StatefulWidget {
@@ -17,22 +16,15 @@ class EditTransaction extends StatefulWidget {
 }
 
 class _EditTransactionState extends State<EditTransaction> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _categoryTransaction;
   late TextEditingController _valueController;
 
-  late DatabaseForSale _dbSale;
-  late DatabaseForExpense _dbExpense;
-  
   late DateTime _dateOfTransaction;
   
   @override
   initState() {
     super.initState();
-    _dbSale = DatabaseForSale(uid: uid);
-    _dbExpense = DatabaseForExpense(uid: uid);
     if(widget.showIncome) {
       _categoryTransaction = TextEditingController(text: widget.sale?.name);
       _valueController = TextEditingController(text: widget.sale?.value.toString());
@@ -51,23 +43,23 @@ class _EditTransactionState extends State<EditTransaction> {
             name: _categoryTransaction.text,
             value: double.parse(_valueController.text),
             saleOnMonth: widget.sale?.saleOnMonth);
-        return await _dbSale.infoToServerSale(sale);
+        return await updateSaleInDatabase(sale);
       } else {
         final expense = Expense(
             name: _categoryTransaction.text,
             value: double.parse(_valueController.text),
             expenseOnMonth: widget.expense?.expenseOnMonth);
-        return await _dbExpense.infoToServerExpanse(expense);
+        return await updateExpenseInDatabase(expense);
       }
     }
   }
   Future<void> deleteSaleDatabase() async {
-    await _dbSale.deleteFromServer(widget.sale!);
+    return await deleteSaleFromDatabase(widget.sale!);
 
   }
 
   Future<void> deleteExpenseDatabase() async {
-    await _dbExpense.deleteFromServer(widget.expense!);
+    return await deleteExpenseFromDatabase(widget.expense!);
 
   }
 

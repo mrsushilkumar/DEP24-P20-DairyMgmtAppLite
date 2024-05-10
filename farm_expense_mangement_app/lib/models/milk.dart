@@ -26,8 +26,7 @@ class Milk {
     return {
       'morning': morning,
       'evening': evening,
-      'dateOfMilk':
-          (dateOfMilk != null) ? Timestamp.fromDate(dateOfMilk!) : null,
+      'dateOfMilk': (dateOfMilk != null) ? dateOfMilk?.millisecondsSinceEpoch : 0,
       'rfid': rfid
     };
   }
@@ -49,6 +48,9 @@ class MilkByDate {
   }
 
   Map<String, dynamic> toFireStore() {
-    return {'dateOfMilk': dateOfMilk, 'totalMilk': totalMilk};
+    return {
+      'dateOfMilk': (dateOfMilk != null) ? dateOfMilk?.millisecondsSinceEpoch : 0,
+      'totalMilk': totalMilk
+    };
   }
 }

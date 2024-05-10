@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:farm_expense_mangement_app/models/feed.dart';
 import 'package:farm_expense_mangement_app/screens/feed/addfeeditem.dart';
 import 'package:farm_expense_mangement_app/services/database/feeddatabase.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:farm_expense_mangement_app/screens/feed/editfeeditem.dart';
 
@@ -16,10 +15,7 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedState extends State<FeedPage> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  late DatabaseServicesForFeed feedDb;
   late List<Feed> allFeed = [];
   late final TextEditingController _searchController = TextEditingController();
 
@@ -27,7 +23,6 @@ class _FeedState extends State<FeedPage> {
   void initState() {
     super.initState();
     // print('Feed Page');
-    feedDb = DatabaseServicesForFeed(uid);
     // setState(() {
     _fetchFeed();
   }
@@ -39,10 +34,10 @@ class _FeedState extends State<FeedPage> {
   }
 
   Future<void> _fetchFeed() async {
-    final snapshot = await feedDb.infoFromServerAllFeed();
+    final snapshot = await getFeedFromDatabase();
     setState(() {
       allFeed =
-          snapshot.docs.map((doc) => Feed.fromFireStore(doc, null)).toList();
+          snapshot;
     });
   }
 
@@ -52,7 +47,7 @@ class _FeedState extends State<FeedPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditFeedItemPage(feed: feed, uid: uid),
+        builder: (context) => EditFeedItemPage(feed: feed),
       ),
     );
   }

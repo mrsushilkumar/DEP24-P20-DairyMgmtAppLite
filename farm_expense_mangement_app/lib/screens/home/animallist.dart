@@ -2,7 +2,6 @@ import 'package:farm_expense_mangement_app/models/cattle.dart';
 import 'package:farm_expense_mangement_app/screens/home/animaldetails.dart';
 import 'package:farm_expense_mangement_app/screens/home/newcattle.dart';
 import 'package:farm_expense_mangement_app/services/database/cattledatabase.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AnimalList extends StatefulWidget {
@@ -13,10 +12,9 @@ class AnimalList extends StatefulWidget {
 }
 
 class _AnimalListState extends State<AnimalList> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  // final user = FirebaseAuth.instance.currentUser;
+  // final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  late DatabaseServicesForCattle cattleDb;
   late List<Cattle> allCattle = [];
   List<String> _selectedStates = [];
   List<String> _selectedGenders = [];
@@ -24,7 +22,7 @@ class _AnimalListState extends State<AnimalList> {
   @override
   void initState() {
     super.initState();
-    cattleDb = DatabaseServicesForCattle(uid);
+
     _fetchCattle();
   }
 
@@ -34,10 +32,9 @@ class _AnimalListState extends State<AnimalList> {
   }
 
   Future<void> _fetchCattle() async {
-    final snapshot = await cattleDb.infoFromServerAllCattle(uid);
+    final snapshot = await getCattleFromDatabase();
     setState(() {
-      allCattle =
-          snapshot.docs.map((doc) => Cattle.fromFireStore(doc, null)).toList();
+      allCattle = snapshot;
     });
   }
 

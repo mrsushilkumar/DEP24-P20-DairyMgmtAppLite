@@ -1,7 +1,6 @@
 import 'package:farm_expense_mangement_app/models/transaction.dart';
 import 'package:farm_expense_mangement_app/screens/transaction/transactionpage.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../services/database/transactiondatabase.dart';
@@ -15,10 +14,7 @@ class AddExpenses extends StatefulWidget {
 }
 
 class _AddExpensesState extends State<AddExpenses> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  late DatabaseForExpense dbExpanse;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -53,11 +49,10 @@ class _AddExpensesState extends State<AddExpenses> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    dbExpanse = DatabaseForExpense(uid: uid);
   }
 
-  void _addExpense(Expense data) {
-    dbExpanse.infoToServerExpanse(data);
+  void _addExpense(Expense data) async{
+    await addExpenseInDatabase(data);
     widget.onSubmit;
   }
 

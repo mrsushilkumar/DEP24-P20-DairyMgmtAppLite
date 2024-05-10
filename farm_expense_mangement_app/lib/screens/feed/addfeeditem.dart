@@ -1,7 +1,7 @@
 import 'package:farm_expense_mangement_app/screens/feed/feedpage.dart';
 import 'package:flutter/material.dart';
 import 'package:farm_expense_mangement_app/services/database/feeddatabase.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 
 import '../../models/feed.dart';
 
@@ -17,14 +17,10 @@ class AddFeedItem extends StatefulWidget {
 class _AddFeedItemState extends State<AddFeedItem> {
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _requiredQuantityController =
-      TextEditingController();
+  final TextEditingController _requiredQuantityController = TextEditingController();
   final TextEditingController _expiryDateController = TextEditingController();
   final TextEditingController _categoryDateController = TextEditingController();
 
-  late final DatabaseServicesForFeed cattleDb;
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   void _saveFeedItem(BuildContext context) {
     String itemName = _itemNameController.text.trim();
@@ -43,7 +39,7 @@ class _AddFeedItemState extends State<AddFeedItem> {
     // Now you can save this newFeedItem to Firestore or perform any other actions here
     // For example, you can use the DatabaseServicesForFeed to save the feed item
     // DatabaseServicesForFeed(itemName).infoToServerFeed(newFeedItem);
-    cattleDb.infoToServerFeed(newFeedItem);
+    addFeedInDatabase(newFeedItem);
 
     // After saving, you can navigate back to the previous screen
     // Navigator.pop(context);
@@ -176,7 +172,6 @@ class _AddFeedItemState extends State<AddFeedItem> {
 // TODO: implement initState
     super.initState();
 
-    cattleDb = DatabaseServicesForFeed(uid);
   }
 
   @override

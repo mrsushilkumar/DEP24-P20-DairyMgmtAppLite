@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'dart:async';
+
 import 'package:farm_expense_mangement_app/screens/home/animallist.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/cattle.dart';
@@ -17,13 +18,9 @@ class AnimalDetails extends StatefulWidget {
 }
 
 class _AnimalDetailsState extends State<AnimalDetails> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-  late Stream<DocumentSnapshot<Map<String, dynamic>>> _streamController;
+  late Stream<Cattle> _streamController;
 
   // late DocumentSnapshot<Map<String,dynamic>> snapshot;
-  late DatabaseServicesForCattle cattleDb;
-  late DatabaseServiceForCattleHistory cattleHistory;
   late Cattle _cattle;
 
   late List<CattleHistory> events = [];
@@ -32,29 +29,21 @@ class _AnimalDetailsState extends State<AnimalDetails> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    cattleDb = DatabaseServicesForCattle(uid);
-    cattleHistory = DatabaseServiceForCattleHistory(uid: uid);
     _fetchCattleHistory();
 
     _streamController = _fetchCattleDetail();
   }
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> _fetchCattleDetail() {
-    return cattleDb.infoFromServer(widget.rfid).asStream();
+  Stream<Cattle> _fetchCattleDetail() {
+
+    return getCattleDetailFromDatabase(widget.rfid).asStream();
   }
 
   Future<void> _fetchCattleHistory() async {
-    final snapshot = await cattleHistory.historyFromServer(widget.rfid);
-    for (var doc in snapshot.docs) {
-      print('Document ID: ${doc.id}');
-      print('Document Data: ${doc.data()}');
-    }
+    final snapshot = await getCattleHistory(widget.rfid);
     setState(() {
-      events = snapshot.docs
-          .map((doc) => CattleHistory.fromFireStore(doc, null))
-          .toList();
+      events = snapshot;
     });
-    events.sort((a, b) => b.date.compareTo(a.date));
   }
 
   void editCattleDetail() {
@@ -65,14 +54,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
   }
 
   void deleteCattle() {
-    cattleDb
-        .deleteCattle(widget.rfid)
-        .then((value) => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Deleted'),
-                duration: Duration(seconds: 2),
-              ),
-            ));
+    deleteCattleFromDatabase(widget.rfid);
     Navigator.pop(context);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => const AnimalList()));
@@ -152,7 +134,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                 child: Text('Please Wait ..'),
               );
             } else if (snapshot.hasData) {
-              _cattle = Cattle.fromFireStore(snapshot.requireData, null);
+              _cattle = snapshot.requireData;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -173,8 +155,9 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return AddEventPopup(
-                                        uid: uid, cattle: _cattle);
+                                    return AddEventPopup(cattle: _cattle,refresh: (){
+                                      _fetchCattleHistory();
+                                    },);
                                   },
                                 );
                               },
@@ -194,7 +177,8 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold),
-                              ))
+                              )
+                          )
                         ],
                       ),
                     ),
@@ -253,7 +237,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                         child: SizedBox(
                                           // width: 80,
                                           child: Text(
-                                            event.date.toString(), // Display the raw date string
+                                            "${event.date.year}-${(event.date.month >9)? event.date.month : '0${event.date.month}'}-${(event.date.day >9)? event.date.day : '0${event.date.day}'}", // Display the raw date string
                                             softWrap: false,
                                             textAlign: TextAlign.left,
                                             style: const TextStyle(
@@ -506,7 +490,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      _cattle.sex,
+                                      _cattle.source,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -548,7 +532,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
   // final TextEditingController _rfidTextController = TextEditingController();
   final TextEditingController _weightTextController = TextEditingController();
   final TextEditingController _breedTextController = TextEditingController();
-  final TextEditingController _agetextController = TextEditingController();
+  final TextEditingController _ageTextController = TextEditingController();
 
   // final TextEditingController _tagNumberController3 = TextEditingController();
 
@@ -573,33 +557,18 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
     'Calved'
   ];
 
-  // Future<void> _selectDate(BuildContext context) async {
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.now(),
-  //     firstDate: DateTime(1900),
-  //     lastDate: DateTime.now(),
-  //   );
-  //   if (picked != null && picked.day.toString() != _birthDateController.text) {
-  //     setState(() {
-  //       _birthDateController.text = picked.toString().split(' ')[0];
-  //     });
-  //   }
-  // }
-
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-
-  late final DatabaseServicesForCattle cattleDb;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    cattleDb = DatabaseServicesForCattle(uid);
+    _selectedGender = widget.cattle.sex;
+    _selectedStage = widget.cattle.state;
+    _selectedSource = widget.cattle.source;
     _breedTextController.text = widget.cattle.breed;
     _weightTextController.text = widget.cattle.weight.toString();
+    _ageTextController.text = widget.cattle.age.toString();
   }
 
   void updateCattleButton(BuildContext context) {
@@ -611,7 +580,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
         weight: int.parse(_weightTextController.text),
         state: _selectedStage.toString());
 
-    cattleDb.infoToServerSingleCattle(cattle);
+    updateCattleInDatabase(cattle);
 
     Navigator.pop(context);
     Navigator.pushReplacement(
@@ -687,7 +656,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   // initialValue: '0',
-                  controller: _agetextController,
+                  controller: _ageTextController,
                   decoration: const InputDecoration(
                     labelText: 'Enter The Age',
                     border: OutlineInputBorder(),
@@ -841,13 +810,13 @@ String capitalizeFirstLetterOfEachWord(String input) {
 }
 
 class AddEventPopup extends StatefulWidget {
-  final String uid;
   final Cattle cattle;
+  final Function refresh;
 
   const AddEventPopup({
     super.key,
-    required this.uid,
     required this.cattle,
+    required this.refresh
   });
 
   @override
@@ -876,6 +845,11 @@ class _AddEventPopupState extends State<AddEventPopup> {
       backgroundColor: Colors.transparent,
       child: contentBox(context),
     );
+  }
+
+  Future addNewCattleHistory(CattleHistory cattleHistory) async {
+    await addCattleHistoryToDatabase(cattleHistory);
+    widget.refresh();
   }
 
   Widget contentBox(BuildContext context) {
@@ -950,13 +924,13 @@ class _AddEventPopupState extends State<AddEventPopup> {
                 // Create a new history entry
                 // final dateWithoutTime = DateTime(selectedDate.year, date.month, date.day);
                 final newHistory = CattleHistory(
+                  rfid: widget.cattle.rfid,
                   name: selectedOption!,
                   date: selectedDate!,
                 );
 
-                // Add the new history entry to the database
-                DatabaseServiceForCattleHistory(uid: widget.uid)
-                    .historyToServerSingleCattle(widget.cattle, newHistory);
+                // Add the new history entry to the database;
+                addNewCattleHistory(newHistory);
 
                 // Close the popup dialog
                 // fetch

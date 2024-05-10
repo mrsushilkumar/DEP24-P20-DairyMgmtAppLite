@@ -20,7 +20,7 @@ class Feed {
       'itemName': itemName,
       'quantity': quantity,
       'category': category,
-      'expiryDate': expiryDate != null ? Timestamp.fromDate(expiryDate!) : null,
+      'expiryDate': expiryDate?.millisecondsSinceEpoch,
       'requiredQuantity': requiredQuantity,
     };
   }
@@ -32,8 +32,7 @@ class Feed {
       itemName: json?['itemName'],
       quantity: json?['quantity'],
       category: json?['category'],
-      expiryDate:
-          (json?['expiryDate'] != null) ? json!['expiryDate'].toDate() : null,
+      expiryDate:DateTime.fromMillisecondsSinceEpoch(json?['expiryDate']),
       requiredQuantity: json?['requiredQuantity'],
     );
   }

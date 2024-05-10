@@ -1,6 +1,5 @@
 import 'package:farm_expense_mangement_app/models/cattle.dart';
 import 'package:farm_expense_mangement_app/screens/home/animallist.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../services/database/cattledatabase.dart';
@@ -56,12 +55,9 @@ class _AddNewCattleState extends State<AddNewCattle> {
   //   }
   // }
 
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-
-  late final DatabaseServicesForCattle cattleDb;
 
   void addNewCattleButton(BuildContext context) {
+
     final cattle = Cattle(
         rfid: _rfidTextController.text,
         age: _agetextController.text.isNotEmpty
@@ -74,7 +70,7 @@ class _AddNewCattleState extends State<AddNewCattle> {
             : 0,
         state: _selectedState != null ? _selectedState! : '');
 
-    cattleDb.infoToServerSingleCattle(cattle);
+    addCattleToDatabase(cattle);
 
     Navigator.pop(context);
     Navigator.pushReplacement(
@@ -86,7 +82,6 @@ class _AddNewCattleState extends State<AddNewCattle> {
     // TODO: implement initState
     super.initState();
 
-    cattleDb = DatabaseServicesForCattle(uid);
     setState(() {});
   }
 

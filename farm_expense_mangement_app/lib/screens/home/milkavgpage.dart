@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 
 import '../../models/cattle.dart';
@@ -15,21 +15,16 @@ class AvgMilkPage extends StatefulWidget {
 }
 
 class _AvgMilkPageState extends State<AvgMilkPage> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  late DatabaseForMilkByDate db;
   List<MilkByDate> _allMilkByDate = [];
   late DateTime _selectedDate = DateTime.now();
   List<MilkByDate> _originalMilkByDate = [];
   bool _isLoading = true;
 
   Future<void> _fetchAllMilkByDate() async {
-    final snapshot = await db.infoFromServerAllMilk();
+    final snapshot = await getAllMilkByDateFromDatabase();
     setState(() {
-      _originalMilkByDate = snapshot.docs
-          .map((doc) => MilkByDate.fromFireStore(doc, null))
-          .toList();
+      _originalMilkByDate = snapshot;
       _allMilkByDate = _originalMilkByDate;
       _isLoading = false;
     });
@@ -38,7 +33,6 @@ class _AvgMilkPageState extends State<AvgMilkPage> {
   @override
   void initState() {
     super.initState();
-    db = DatabaseForMilkByDate(uid);
     _fetchAllMilkByDate();
   }
 
@@ -153,21 +147,14 @@ class AddMilkDataPage extends StatefulWidget {
 }
 
 class _AddMilkDataPageState extends State<AddMilkDataPage> {
-  final user = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-
-  late DatabaseForMilk db;
-  late DatabaseForMilkByDate dbByDate;
-  late DatabaseServicesForCattle cattleDb;
 
   List<Cattle> allCattle = [];
   List<String> allRfid = [];
 
   Future<void> _fetchCattle() async {
-    final snapshot = await cattleDb.infoFromServerAllCattle(uid);
+    final snapshot = await getFemaleCattleFromDatabase();
     setState(() {
-      allCattle =
-          snapshot.docs.map((doc) => Cattle.fromFireStore(doc, null)).toList();
+      allCattle = snapshot;
       allRfid = allCattle.map((cattle) => cattle.rfid).toList();
     });
   }
@@ -180,25 +167,17 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
   @override
   void initState() {
     super.initState();
-    db = DatabaseForMilk(uid);
-    dbByDate = DatabaseForMilkByDate(uid);
-    cattleDb = DatabaseServicesForCattle(uid);
     _fetchCattle();
   }
 
   Future<void> _addMilk(Milk data) async {
-    await db.infoToServerMilk(data);
-    final snapshot = await dbByDate.infoFromServerMilk(data.dateOfMilk!);
+    await addMilkInDatabase(data);
+    final snapshot = await getMilkByDateFromDatabase(data.dateOfMilk!);
     final MilkByDate milkByDate;
-    if (snapshot.exists) {
-      milkByDate = MilkByDate.fromFireStore(snapshot, null);
-    } else {
-      milkByDate = MilkByDate(dateOfMilk: data.dateOfMilk);
-      await dbByDate.infoToServerMilk(milkByDate);
-    }
+    milkByDate = snapshot;
+
     final double totalMilk = milkByDate.totalMilk + data.morning + data.evening;
-    await dbByDate.infoToServerMilk(
-        MilkByDate(dateOfMilk: data.dateOfMilk, totalMilk: totalMilk));
+    await addMilkByDateInDatabase(MilkByDate(dateOfMilk: data.dateOfMilk, totalMilk: totalMilk));
   }
 
   @override
