@@ -97,12 +97,7 @@ class _TransactionPageState extends State<TransactionPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TotalTransactionPage(
-                    selectedStartDate: selectedStartDate,
-                    selectedEndDate: selectedEndDate,
-                    incomeTransactions: incomeTransactions,
-                    expenseTransactions: expenseTransactions,
-                  ),
+                  builder: (context) => TotalTransactionPage(start: selectedStartDate,end: selectedEndDate,),
                 ),
               );
             },
@@ -343,19 +338,65 @@ class _ListTileForExpenseState extends State<ListTileForExpense> {
   }
 }
 
-class TotalTransactionPage extends StatelessWidget {
-  final DateTime? selectedStartDate;
-  final DateTime? selectedEndDate;
-  final List<Sale> incomeTransactions;
-  final List<Expense> expenseTransactions;
+class TotalTransactionPage extends StatefulWidget {
+  final DateTime? start;
+  final DateTime? end;
 
   const TotalTransactionPage({
     super.key,
-    required this.selectedStartDate,
-    required this.selectedEndDate,
-    required this.incomeTransactions,
-    required this.expenseTransactions,
+    this.start,
+    this.end
   });
+
+  @override
+  State<TotalTransactionPage> createState() => _TotalTransactionPageState();
+}
+
+class _TotalTransactionPageState extends State<TotalTransactionPage> {
+
+  List<Sale> incomeTransactions = [];
+  List<Expense> expenseTransactions = [];
+
+  DateTime? selectedStartDate;
+  DateTime? selectedEndDate;
+
+  Future<void> _fetchIncome() async {
+    final snapshot = await getAllSaleFromDatabase();
+    setState(() {
+      incomeTransactions = snapshot
+          .where((sale) =>
+      (selectedStartDate == null ||
+          sale.saleOnMonth!.isAfter(selectedStartDate!)) &&
+          (selectedEndDate == null ||
+              sale.saleOnMonth!.isBefore(selectedEndDate!)))
+          .toList();
+    });
+  }
+
+  Future<void> _fetchExpense() async {
+    final snapshot = await getAllExpenseFromDatabase();
+    setState(() {
+      expenseTransactions = snapshot
+          .where((expense) =>
+      (selectedStartDate == null ||
+          expense.expenseOnMonth!.isAfter(selectedStartDate!)) &&
+          (selectedEndDate == null ||
+              expense.expenseOnMonth!.isBefore(selectedEndDate!)))
+          .toList();
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchIncome();
+    _fetchExpense();
+
+    selectedStartDate = widget.start;
+    selectedEndDate = widget.end;
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -396,8 +437,39 @@ class TotalTransactionPage extends StatelessWidget {
       expensePerCategory[category] = (expensePerCategory[category] ?? 0) + transaction.value;
     }
 
+    final DateTime? startDatePrint = selectedStartDate?.add(const Duration(days: 1));
+    final DateTime? endDatePrint = selectedEndDate?.subtract(const Duration(days: 1));
+
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.filter_list_outlined,
+              color: Colors.black,
+            ),
+            onPressed: () async {
+              await _showDateRangePicker(context);
+              setState(() {});
+            },
+          ),
+          Visibility(
+            visible: selectedStartDate != null || selectedEndDate != null,
+            child: IconButton(
+              icon: const Icon(
+                Icons.clear,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                setState(() {
+                  selectedStartDate = null;
+                  selectedEndDate = null;
+                  _fetchIncome();
+                  _fetchExpense();
+                });
+              },
+            ),
+          )],
         backgroundColor: const Color.fromRGBO(13, 152, 186, 1.0),
         title: const Text(
           'Total Transactions',
@@ -411,7 +483,7 @@ class TotalTransactionPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Date Range: ${selectedStartDate != null ? "${selectedStartDate!.day}/${selectedStartDate!.month}/${selectedStartDate!.year}" : "Start"} - ${selectedEndDate != null ? "${selectedEndDate!.day}/${selectedEndDate!.month}/${selectedEndDate!.year}" : "End"}',
+              'Date Range: ${selectedStartDate != null ? "${startDatePrint!.day}/${startDatePrint.month}/${startDatePrint.year}" : "Start"} - ${selectedEndDate != null ? "${endDatePrint!.day}/${endDatePrint.month}/${endDatePrint.year}" : "End"}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -472,5 +544,22 @@ class TotalTransactionPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _showDateRangePicker(BuildContext context) async {
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      initialDateRange: selectedStartDate != null && selectedEndDate != null
+          ? DateTimeRange(start: selectedStartDate!, end: selectedEndDate!)
+          : null,
+    );
+    if (picked != null) {
+      selectedStartDate = picked.start.subtract(const Duration(days: 1));
+      selectedEndDate = picked.end.add(const Duration(days: 1));
+      _fetchIncome();
+      _fetchExpense();
+    }
   }
 }

@@ -472,8 +472,9 @@ class _EditMilkByDateState extends State<EditMilkByDate> {
                       );
                       _editMilkDetail(newMilkData);
                       Navigator.pop(context);
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => const AvgMilkPage()));
-                      Navigator.pushReplacement(
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AvgMilkPage()));
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => MilkByDatePage(
