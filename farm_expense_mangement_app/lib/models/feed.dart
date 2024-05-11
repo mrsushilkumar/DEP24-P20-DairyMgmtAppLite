@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Feed {
   String itemName;
@@ -25,15 +24,4 @@ class Feed {
     };
   }
 
-  factory Feed.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    final json = snapshot.data();
-    return Feed(
-      itemName: json?['itemName'],
-      quantity: json?['quantity'],
-      category: json?['category'],
-      expiryDate:DateTime.fromMillisecondsSinceEpoch(json?['expiryDate']),
-      requiredQuantity: json?['requiredQuantity'],
-    );
-  }
 }

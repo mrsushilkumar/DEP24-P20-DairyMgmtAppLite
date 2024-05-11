@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 // final cattle = Cattle(rfid:"5515154", sex: "male",age:  10,breed: "cow" ,lactationCycle:  2,weight:  120,/*dateOfBirth: DateTime.parse('2020-12-01')*/);
 
@@ -22,20 +21,6 @@ class Cattle {
       this.source = 'Born on Farm'
       /*required this.dateOfBirth*/
       });
-
-  factory Cattle.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    final data = snapshot.data();
-    return Cattle(
-        rfid: data?['rfid'],
-        sex: data?['sex'],
-        age: data?['age'],
-        breed: data?['breed'],
-        weight: data?['weight'],
-        state: data?['state']
-        // dateOfBirth: data?['dateOfBirth']
-        );
-  }
 
   Map<String, dynamic> toFireStore() {
     return {

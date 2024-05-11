@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class Sale {
   String name;
@@ -7,15 +7,6 @@ class Sale {
 
   Sale({required this.name, required this.value, required this.saleOnMonth});
 
-  factory Sale.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    final data = snapshot.data();
-    return Sale(
-      name: data?['name'],
-      value: data?['value'],
-      saleOnMonth:DateTime.fromMillisecondsSinceEpoch(data?['saleOnMonth']),
-    );
-  }
 
   Map<String, dynamic> toFireStore() {
     return {
@@ -34,15 +25,6 @@ class Expense {
   Expense(
       {required this.name, required this.value, required this.expenseOnMonth});
 
-  factory Expense.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    final data = snapshot.data();
-    return Expense(
-      name: data?['name'],
-      value: data?['value'],
-      expenseOnMonth: DateTime.fromMillisecondsSinceEpoch(data?['expenseOnMonth']),
-    );
-  }
 
   Map<String, dynamic> toFireStore() {
     return {

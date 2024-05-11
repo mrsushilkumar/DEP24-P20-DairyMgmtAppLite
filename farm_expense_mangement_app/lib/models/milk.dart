@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class Milk {
   double morning;
@@ -11,16 +11,6 @@ class Milk {
       this.evening = 0,
       required this.dateOfMilk});
 
-  factory Milk.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    final data = snapshot.data();
-    return Milk(
-        morning: data?['morning'],
-        evening: data?['evening'],
-        dateOfMilk:
-            (data?['dateOfMilk'] != null) ? data!['dateOfMilk'].toDate() : null,
-        rfid: data?['rfid']);
-  }
 
   Map<String, dynamic> toFireStore() {
     return {
@@ -37,15 +27,6 @@ class MilkByDate {
   double totalMilk;
   MilkByDate({required this.dateOfMilk, this.totalMilk = 0});
 
-  factory MilkByDate.fromFireStore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    final data = snapshot.data();
-    return MilkByDate(
-        dateOfMilk:
-            (data?['dateOfMilk'] != null) ? data!['dateOfMilk'].toDate() : null,
-        totalMilk: data?['totalMilk']);
-  }
 
   Map<String, dynamic> toFireStore() {
     return {
