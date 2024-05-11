@@ -1,10 +1,70 @@
 import 'package:farm_expense_mangement_app/screens/feed/feedpage.dart';
 import 'package:farm_expense_mangement_app/screens/home/animallist.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'milkavgpage.dart';
 import '../transaction/transactionpage.dart';
+import 'localisations_en.dart';
+import 'localisations_hindi.dart';
+import 'localisations_punjabi.dart';
+
+class AppData with ChangeNotifier {
+  static String _persistentVariable = "en";
+
+  String get persistentVariable => _persistentVariable;
+
+  set persistentVariable(String value) {
+    _persistentVariable = value;
+    notifyListeners(); // Notify listeners of the change
+  }
+}
+
+class LanguagePopup  {
+  // static String selectedLanguageCode = 'en'; // Global variable to store selected language code
+
+  static void showLanguageOptions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Language'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption(context, 'हिन्दी', 'hi'),
+              _buildLanguageOption(context, 'English', 'en'),
+              _buildLanguageOption(context, 'ਪੰਜਾਬੀ', 'pa'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  static Widget _buildLanguageOption(
+      BuildContext context, String language, String languageCode) {
+    return InkWell(
+      onTap: () {
+        // Set the selected language code
+        // selectedLanguageCode = languageCode;
+        Provider.of<AppData>(context, listen: false).persistentVariable = languageCode;
+        // Close the dialog
+        print(language);
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          language,
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+}
+
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+
   const HomeAppBar({super.key});
 
   final Color myColor = const Color(0xFF39445A);
@@ -14,6 +74,25 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return PreferredSize(
       preferredSize: const Size.fromHeight(240),
       child: AppBar(
+        actions: [
+          FloatingActionButton(
+            onPressed: () {
+              // home(context);
+              LanguagePopup.showLanguageOptions(context);
+            },
+            // backgroundColor: _selectedIndex == 2
+            //     ? Colors.black
+            //     : const Color.fromRGBO(13, 166, 186, 1.0),
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            child: const Icon(
+              Icons.language,
+              color: Colors.white,
+              size: 30,
+            ),
+          ),
+        ],
         centerTitle: true,
         flexibleSpace: ClipRRect(
           borderRadius: const BorderRadius.only(
@@ -82,8 +161,20 @@ class HomePage extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     Color totalCowsColor =
         const Color.fromRGBO(224, 191, 184, 1.0); // Green color
     Color milkingCowsColor =
@@ -108,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: buildClickableContainer(
                       context,
-                      'Cattles',
+                      'cattles',
                       'asset/cattles.jpg',
                       totalCowsColor,
                       () => Navigator.push(
@@ -122,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: buildClickableContainer(
                       context,
-                      'Feed',
+                      'feed',
                       'asset/feed.jpg',
                       milkingCowsColor,
                       () => Navigator.push(
@@ -142,7 +233,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: buildClickableContainer(
                       context,
-                      'Transaction',
+                      'transaction',
                       'asset/transactions.webp',
                       dryCowsColor,
                       () => Navigator.push(
@@ -156,7 +247,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: buildClickableContainer(
                       context,
-                      'Avg Milk',
+                      'avg_milk',
                       'asset/avg.jpg',
                       avgMilkPerCowColor,
                       () => Navigator.push(
@@ -248,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 child: Text(
-                  value,
+                  currentLocalization[value] ?? "",
                   maxLines: 1,
                   softWrap: true,
                   overflow: TextOverflow.visible,

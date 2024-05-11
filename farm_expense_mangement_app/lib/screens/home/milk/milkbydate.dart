@@ -1,8 +1,14 @@
 import 'package:farm_expense_mangement_app/screens/home/milkavgpage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../main.dart';
 import '../../../models/milk.dart';
 import '../../../services/database/milkdatabase.dart';
+import '../homepage.dart';
+import '../localisations_en.dart';
+import '../localisations_hindi.dart';
+import '../localisations_punjabi.dart';
 
 class MilkByDatePage extends StatefulWidget {
   final DateTime? dateOfMilk;
@@ -14,6 +20,8 @@ class MilkByDatePage extends StatefulWidget {
 }
 
 class _MilkByDatePageState extends State<MilkByDatePage> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
   List<Milk> _allMilkInDate = [];
   List<Milk> _filteredMilk = [];
 
@@ -58,13 +66,23 @@ class _MilkByDatePageState extends State<MilkByDatePage> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
-        title: const Center(
+        title: Center(
           child: Text(
-            'Milk Records',
+            currentLocalization['milk_records']??"",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -104,7 +122,7 @@ class _MilkByDatePageState extends State<MilkByDatePage> {
           Padding(
             padding: const EdgeInsets.only(left: 20.0, top: 20.0),
             child: Text(
-              'Date: ${widget.dateOfMilk!.day}-${widget.dateOfMilk!.month}-${widget.dateOfMilk!.year}',
+              '${currentLocalization['date']}: ${widget.dateOfMilk!.day}-${widget.dateOfMilk!.month}-${widget.dateOfMilk!.year}',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -232,6 +250,8 @@ class MilkDataRow extends StatefulWidget {
 }
 
 class _MilkDataRowState extends State<MilkDataRow> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
   void editDetail() {
     Navigator.push(
         context,
@@ -241,6 +261,15 @@ class _MilkDataRowState extends State<MilkDataRow> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     final double totalMilk = widget.data.evening + widget.data.morning;
 
     return Card(
@@ -264,7 +293,7 @@ class _MilkDataRowState extends State<MilkDataRow> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Rf id: ${widget.data.rfid}",
+                  "${currentLocalization["rf_id"]??""}: ${widget.data.rfid}",
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -298,7 +327,7 @@ class _MilkDataRowState extends State<MilkDataRow> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        "Morning: ${widget.data.morning.toStringAsFixed(2)}L",
+                        "${currentLocalization['morning']??""}: ${widget.data.morning.toStringAsFixed(2)}L",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -316,7 +345,7 @@ class _MilkDataRowState extends State<MilkDataRow> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        "Evening: ${widget.data.evening.toStringAsFixed(2)}L",
+                        "${currentLocalization['evening']}: ${widget.data.evening.toStringAsFixed(2)}L",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -336,7 +365,7 @@ class _MilkDataRowState extends State<MilkDataRow> {
                         width: 10,
                       ),
                       Text(
-                        "Total: ${totalMilk}L",
+                        "${currentLocalization['total']}: ${totalMilk}L",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,

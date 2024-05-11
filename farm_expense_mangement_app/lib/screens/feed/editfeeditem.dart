@@ -2,7 +2,12 @@ import 'package:farm_expense_mangement_app/screens/feed/feedpage.dart';
 import 'package:flutter/material.dart';
 import 'package:farm_expense_mangement_app/models/feed.dart';
 import 'package:farm_expense_mangement_app/services/database/feeddatabase.dart';
-
+import 'package:provider/provider.dart';
+import '../../main.dart';
+import '../home/homepage.dart';
+import '../home/localisations_en.dart';
+import '../home/localisations_hindi.dart';
+import '../home/localisations_punjabi.dart';
 class EditFeedItemPage extends StatefulWidget {
   final Feed feed;
 
@@ -13,6 +18,9 @@ class EditFeedItemPage extends StatefulWidget {
 }
 
 class _EditFeedItemPageState extends State<EditFeedItemPage> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _itemNameController;
   late TextEditingController _categoryController;
@@ -104,12 +112,21 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
-        title: const Text(
-          'Edit Feed Item',
+        title:  Text(
+          currentLocalization['edit_feed_item']??"",
           style: TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
         ),
@@ -132,8 +149,8 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                   enabled: false,
                   style: const TextStyle(fontSize: 20, color: Colors.black),
                   controller: _itemNameController,
-                  decoration: const InputDecoration(
-                      labelText: 'Item Name',
+                  decoration:  InputDecoration(
+                      labelText:  currentLocalization['item_name']??"",
                       labelStyle: TextStyle(fontSize: 20, color: Colors.black)),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -152,7 +169,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                 ),
                 child: TextFormField(
                   controller: _categoryController,
-                  decoration: const InputDecoration(labelText: 'Category'),
+                  decoration:  InputDecoration(labelText: currentLocalization['category']??"",),
                 ),
               ),
               Container(
@@ -164,7 +181,9 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                 ),
                 child: TextFormField(
                   controller: _needController,
-                  decoration: const InputDecoration(labelText: 'Need (unit)'),
+
+                  decoration: InputDecoration(labelText:currentLocalization['need']??"",),
+
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -186,7 +205,9 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                 ),
                 child: TextFormField(
                   controller: _stockController,
-                  decoration: const InputDecoration(labelText: 'Stock (unit)'),
+
+                  decoration: InputDecoration(labelText: currentLocalization['stock']??"",),
+
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -208,7 +229,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                 ),
                 child: ListTile(
                   title: Text(
-                      'Expiry Date: ${_expiryDate.year}-${_expiryDate.month}-${_expiryDate.day}'),
+                      '${ currentLocalization['expiry_date']??""}: ${_expiryDate.year}-${_expiryDate.month}-${_expiryDate.day}'),
                   onTap: () async {
                     final selectedDate = await showDatePicker(
                       context: context,
@@ -238,8 +259,8 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromRGBO(13, 166, 186, 0.9)),
                     ),
-                    child: const Text(
-                      'Delete',
+                    child:  Text(
+                      currentLocalization['delete']??"",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
@@ -252,8 +273,8 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromRGBO(13, 166, 186, 0.9)),
                     ),
-                    child: const Text(
-                      'Save',
+                    child:  Text(
+                      currentLocalization['save']??"",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),

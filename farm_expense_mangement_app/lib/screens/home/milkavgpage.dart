@@ -1,12 +1,17 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/cattle.dart';
 import '../../models/milk.dart';
 import '../../services/database/cattledatabase.dart';
 import '../../services/database/milkdatabase.dart';
+import 'homepage.dart';
 import 'milk/milkbydate.dart';
-
+import '../../main.dart';
+import 'localisations_en.dart';
+import 'localisations_hindi.dart';
+import 'localisations_punjabi.dart';
 class AvgMilkPage extends StatefulWidget {
   const AvgMilkPage({super.key});
 
@@ -15,6 +20,8 @@ class AvgMilkPage extends StatefulWidget {
 }
 
 class _AvgMilkPageState extends State<AvgMilkPage> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
 
   List<MilkByDate> _allMilkByDate = [];
   late DateTime _selectedDate = DateTime.now();
@@ -67,13 +74,22 @@ class _AvgMilkPageState extends State<AvgMilkPage> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
-        title: const Center(
+        title:  Center(
           child: Text(
-            'Milk Records',
+            currentLocalization['milk_records']??'',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -138,15 +154,19 @@ class _AvgMilkPageState extends State<AvgMilkPage> {
 }
 
 class AddMilkDataPage extends StatefulWidget {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
   final VoidCallback? onMilkRecordAdded;
 
-  const AddMilkDataPage({super.key, this.onMilkRecordAdded});
+   AddMilkDataPage({super.key, this.onMilkRecordAdded});
 
   @override
   State<AddMilkDataPage> createState() => _AddMilkDataPageState();
 }
 
 class _AddMilkDataPageState extends State<AddMilkDataPage> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
 
   List<Cattle> allCattle = [];
   List<String> allRfid = [];
@@ -182,11 +202,20 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1),
       appBar: AppBar(
-        title: const Text(
-          'Add Milk Data',
+        title:  Text(
+          currentLocalization['add_milk_data']??"",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
@@ -206,8 +235,8 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
             children: [
               DropdownButtonFormField<String>(
                 value: selectedRfid,
-                decoration: const InputDecoration(
-                  labelText: 'Select RFID',
+                decoration:  InputDecoration(
+                  labelText: currentLocalization['select_rfid']??"",
                   border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -225,7 +254,8 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please select RFID';
+                    return currentLocalization['please_select_rfid']??"";
+
                   }
                   return null;
                 },
@@ -237,8 +267,10 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
                   onChanged: (value) {
                     milkInMorning = double.tryParse(value);
                   },
+
                   decoration: const InputDecoration(
                     labelText: 'Morning Milk (Ltr.)',
+
                     border: InputBorder.none,
                   ),
                 ),
@@ -249,8 +281,10 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
                   onChanged: (value) {
                     milkInEvening = double.tryParse(value);
                   },
+
                   decoration: const InputDecoration(
                     labelText: 'Evening Milk (Ltr.)',
+
                     border: InputBorder.none,
                   ),
                 ),
@@ -279,8 +313,8 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
                             ? '${milkingDate!.year}-${milkingDate!.month}-${milkingDate!.day}'
                             : '',
                       ),
-                      decoration: const InputDecoration(
-                        labelText: 'Milking Date',
+                      decoration:  InputDecoration(
+                        labelText: currentLocalization['milking_date']??"",
                         suffixIcon: Icon(Icons.calendar_today),
                         border: InputBorder.none,
                       ),
@@ -313,9 +347,10 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Padding(
+                  child:  Padding(
                     padding: EdgeInsets.all(4.0),
-                    child: Text('Add',
+                    child: Text(
+                        currentLocalization['add']??"",
                         style: TextStyle(
                             fontSize: 15,
                             color: Colors.black,
@@ -352,6 +387,8 @@ class MilkDataRowByDate extends StatefulWidget {
 }
 
 class _MilkDataRowByDateState extends State<MilkDataRowByDate> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
   void viewMilkByDate() {
     Navigator.push(
       context,
@@ -364,6 +401,15 @@ class _MilkDataRowByDateState extends State<MilkDataRowByDate> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return GestureDetector(
       onTap: () {
         viewMilkByDate();
@@ -404,17 +450,17 @@ class _MilkDataRowByDateState extends State<MilkDataRowByDate> {
               ),
             ),
             title: Text(
-              "Date: ${widget.data.dateOfMilk?.day}-${widget.data.dateOfMilk?.month}-${widget.data.dateOfMilk?.year}",
+              "${currentLocalization['date']??''}: ${widget.data.dateOfMilk?.day}-${widget.data.dateOfMilk?.month}-${widget.data.dateOfMilk?.year}",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Row(
               children: [
-                const Text(
-                  "Total Milk: ",
+                 Text(
+                  currentLocalization['total_milk']??'',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "${widget.data.totalMilk.toStringAsFixed(2)}L",
+                  "${widget.data.totalMilk.toStringAsFixed(2)} ${currentLocalization["litre"]??''}",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 )
               ],

@@ -2,9 +2,15 @@ import 'package:farm_expense_mangement_app/models/transaction.dart';
 import 'package:farm_expense_mangement_app/screens/transaction/edittransaction.dart';
 import 'package:farm_expense_mangement_app/services/database/transactiondatabase.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../home/homepage.dart';
 import 'expenses.dart';
 import 'income.dart';
+import '../../main.dart';
+import '../home/localisations_en.dart';
+import '../home/localisations_hindi.dart';
+import '../home/localisations_punjabi.dart';
 
 class TransactionPage extends StatefulWidget {
   final bool showIncome; // New parameter
@@ -15,7 +21,8 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
-
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
 
   bool showIncome = true;
   List<Sale> incomeTransactions = [];
@@ -62,12 +69,21 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(13, 152, 186, 1.0),
-        title: const Text(
-          'Transactions',
+        title: Text(
+          currentLocalization['transactions']??"",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
@@ -149,9 +165,9 @@ class _TransactionPageState extends State<TransactionPage> {
                             ? [BoxShadow(color: Colors.grey.withOpacity(1), blurRadius: 4)]
                             : [],
                       ),
-                      child: const Center(
+                      child:  Center(
                         child: Text(
-                          'Income',
+                          currentLocalization['income']??"",
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
@@ -178,9 +194,9 @@ class _TransactionPageState extends State<TransactionPage> {
                         ),
                         boxShadow: showIncome ? [] : [BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 4)],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'Expenses',
+                          currentLocalization['expenses']??"",
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
@@ -255,8 +271,19 @@ class ListTileForSale extends StatefulWidget {
 }
 
 class _ListTileForSaleState extends State<ListTileForSale> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return ListView.builder(
       itemCount: widget.data.length,
       itemBuilder: (context, index) {
@@ -271,11 +298,15 @@ class _ListTileForSaleState extends State<ListTileForSale> {
             ),
             child: ListTile(
               title: Text(
-                sale.name,
+                sale.name == "Milk Sale"
+                    ? currentLocalization['milk_sale'] ?? ''
+                    : sale.name == "Cattle Sale"
+                    ? currentLocalization['cattle_sale'] ?? ''
+                    : sale.name ?? '',
                 style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                'Amount:  ${sale.value.toStringAsFixed(2)}| On Date: ${sale.saleOnMonth?.day}-${sale.saleOnMonth?.month}-${sale.saleOnMonth?.year}',
+                '${currentLocalization['amount']}:  ${sale.value.toStringAsFixed(2)}| ${currentLocalization['on_date']}: ${sale.saleOnMonth?.day}-${sale.saleOnMonth?.month}-${sale.saleOnMonth?.year}',
                 style:  TextStyle(color: Colors.grey[800]),
               ),
               trailing: IconButton(
@@ -301,8 +332,19 @@ class ListTileForExpense extends StatefulWidget {
 }
 
 class _ListTileForExpenseState extends State<ListTileForExpense> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return ListView.builder(
       itemCount: widget.data.length,
       itemBuilder: (context, index) {
@@ -317,11 +359,13 @@ class _ListTileForExpenseState extends State<ListTileForExpense> {
             ),
             child: ListTile(
               title: Text(
-                expense.name,
+                expense.name != "Feed" && expense.name != "Veterinary" && expense.name != "Labor Costs"&& expense.name != "Equipment and Machinery"
+                    ? expense.name ?? ''
+                    : currentLocalization[expense.name] ?? '',
                 style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                'Amount:  ${expense.value.toStringAsFixed(2)}| On Date: ${expense.expenseOnMonth?.day}-${expense.expenseOnMonth?.month}-${expense.expenseOnMonth?.year}',
+                '${currentLocalization['amount']}:  ${expense.value.toStringAsFixed(2)}| ${currentLocalization['on_date']}: ${expense.expenseOnMonth?.day}-${expense.expenseOnMonth?.month}-${expense.expenseOnMonth?.year}',
                 style: TextStyle(color: Colors.grey[800]),
               ),
               trailing: IconButton(
@@ -339,10 +383,13 @@ class _ListTileForExpenseState extends State<ListTileForExpense> {
 }
 
 class TotalTransactionPage extends StatefulWidget {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   final DateTime? start;
   final DateTime? end;
 
-  const TotalTransactionPage({
+   TotalTransactionPage({
     super.key,
     this.start,
     this.end
@@ -353,6 +400,8 @@ class TotalTransactionPage extends StatefulWidget {
 }
 
 class _TotalTransactionPageState extends State<TotalTransactionPage> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
 
   List<Sale> incomeTransactions = [];
   List<Expense> expenseTransactions = [];
@@ -400,6 +449,15 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     // Calculate total income
     final totalIncome = incomeTransactions
         .where((sale) =>
@@ -471,8 +529,8 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
             ),
           )],
         backgroundColor: const Color.fromRGBO(13, 152, 186, 1.0),
-        title: const Text(
-          'Total Transactions',
+        title:  Text(
+          currentLocalization['total_transactions']??'',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -483,18 +541,18 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Date Range: ${selectedStartDate != null ? "${startDatePrint!.day}/${startDatePrint.month}/${startDatePrint.year}" : "Start"} - ${selectedEndDate != null ? "${endDatePrint!.day}/${endDatePrint.month}/${endDatePrint.year}" : "End"}',
+              '${currentLocalization["date_range"]} ${selectedStartDate != null ? "${selectedStartDate!.day}/${selectedStartDate!.month}/${selectedStartDate!.year}" : ""} - ${selectedEndDate != null ? "${selectedEndDate!.day}/${selectedEndDate!.month}/${selectedEndDate!.year}" : ""}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
             Text(
-              'Total Income: ₹$totalIncome',
+              '${currentLocalization["total_income"]}: ₹$totalIncome',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
             ),
             const SizedBox(height: 7),
-            const Text(
-              'Income per Category:',
+             Text(
+              '${currentLocalization["income_per_category"]}',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             ...incomePerCategory.entries.map((entry) => Padding(
@@ -502,7 +560,9 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(entry.key, style: const TextStyle(fontSize: 14)),
+                  Text(
+                      '${entry.key != "Milk Sale" && entry.key != "Cattle Sale"? entry.key : currentLocalization[entry.key]}' ,
+                      style: const TextStyle(fontSize: 14)),
                   Text('₹${entry.value.toStringAsFixed(2)}', style: const TextStyle(fontSize: 14)),
                 ],
               ),
@@ -513,8 +573,8 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
             ),
             const SizedBox(height: 7),
-            const Text(
-              'Expense per Category:',
+             Text(
+              '${currentLocalization["expense_per_category"]}',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             ...expensePerCategory.entries.map((entry) => Padding(
@@ -522,7 +582,10 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(entry.key, style: const TextStyle(fontSize: 14)),
+                  Text(entry.key!= "Feed" && entry.key != "Veterinary" && entry.key != "Labor Costs"&& entry.key != "Equipment and Machinery"
+                      ? entry.key ?? ''
+                      : currentLocalization[entry.key] ?? '',
+                      style: const TextStyle(fontSize: 14)),
                   Text('₹${entry.value.toStringAsFixed(2)}', style: const TextStyle(fontSize: 14)),
                 ],
               ),
@@ -530,8 +593,8 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
             const SizedBox(height: 30),
             Text(
               netProfit>=0?
-              'Net Profit: ₹$netProfit':
-    'Net Loss: ₹${-netProfit}',
+              '${currentLocalization['net_profit']}: ₹$netProfit':
+              '${currentLocalization['net_loss']}:₹${-netProfit}',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

@@ -4,6 +4,12 @@ import 'package:farm_expense_mangement_app/models/transaction.dart';
 import 'package:farm_expense_mangement_app/screens/transaction/transactionpage.dart';
 import 'package:farm_expense_mangement_app/services/database/transactiondatabase.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../main.dart';
+import '../home/homepage.dart';
+import '../home/localisations_en.dart';
+import '../home/localisations_hindi.dart';
+import '../home/localisations_punjabi.dart';
 
 class EditTransaction extends StatefulWidget {
   final bool showIncome;
@@ -16,6 +22,9 @@ class EditTransaction extends StatefulWidget {
 }
 
 class _EditTransactionState extends State<EditTransaction> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _categoryTransaction;
   late TextEditingController _valueController;
@@ -115,12 +124,21 @@ class _EditTransactionState extends State<EditTransaction> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
         title: Text(
-          (widget.showIncome) ? 'Edit Income' : 'Edit Expense',
+          (widget.showIncome) ? '${currentLocalization['edit_income']}' : '${currentLocalization['edit_expense']}',
           style: const TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
         ),
@@ -142,9 +160,11 @@ class _EditTransactionState extends State<EditTransaction> {
                   readOnly: true,
                   enabled: false,
                   style: const TextStyle(fontSize: 20, color: Colors.black),
-                  controller: _categoryTransaction,
+                  initialValue:(widget.showIncome) ? '${currentLocalization[widget?.sale?.name]}' : '${currentLocalization[widget?.expense?.name]}',
                   decoration: InputDecoration(
-                      labelText: (widget.showIncome) ? 'Income Category ' : 'Expense Category ',
+
+                      labelText: (widget.showIncome) ? '${currentLocalization['income_category']}' : '${currentLocalization['expense_category']}',
+
                       labelStyle: const TextStyle(fontSize: 20, color: Colors.black)),
 
                 ),
@@ -161,8 +181,8 @@ class _EditTransactionState extends State<EditTransaction> {
                   enabled: false,
                   style: const TextStyle(fontSize: 20, color: Colors.black),
                   initialValue: '${_dateOfTransaction.year}-${_dateOfTransaction.month}-${_dateOfTransaction.day}',
-                  decoration: const InputDecoration(
-                      labelText: 'Transaction Date',
+                  decoration:  InputDecoration(
+                      labelText: '${currentLocalization['transaction_date']}',
                       labelStyle: TextStyle(fontSize: 20, color: Colors.black)),
 
                 ),
@@ -176,7 +196,9 @@ class _EditTransactionState extends State<EditTransaction> {
                 ),
                 child: TextFormField(
                   controller: _valueController,
-                  decoration: const InputDecoration(labelText: 'Enter Transaction Amount (₹)'),
+
+                  decoration: InputDecoration(labelText: '${currentLocalization['enter_transaction_amount']}'),
+
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -245,8 +267,8 @@ class _EditTransactionState extends State<EditTransaction> {
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromRGBO(13, 166, 186, 0.9)),
                     ),
-                    child: const Text(
-                      'Delete',
+                    child:  Text(
+                      currentLocalization['delete']??"",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
@@ -259,8 +281,8 @@ class _EditTransactionState extends State<EditTransaction> {
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromRGBO(13, 166, 186, 0.9)),
                     ),
-                    child: const Text(
-                      'Save',
+                    child: Text(
+                      currentLocalization['save']??"",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),

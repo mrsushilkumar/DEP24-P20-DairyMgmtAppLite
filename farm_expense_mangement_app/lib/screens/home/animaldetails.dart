@@ -3,12 +3,17 @@ import 'dart:async';
 
 import 'package:farm_expense_mangement_app/screens/home/animallist.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/cattle.dart';
 import '../../services/database/cattledatabase.dart';
 import 'package:farm_expense_mangement_app/models/history.dart';
 import 'package:farm_expense_mangement_app/services/database/cattlehistorydatabase.dart';
-
+import '../../main.dart';
+import 'homepage.dart';
+import 'localisations_en.dart';
+import 'localisations_hindi.dart';
+import 'localisations_punjabi.dart';
 class AnimalDetails extends StatefulWidget {
   final String rfid;
   const AnimalDetails({super.key, required this.rfid});
@@ -18,6 +23,9 @@ class AnimalDetails extends StatefulWidget {
 }
 
 class _AnimalDetailsState extends State<AnimalDetails> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   late Stream<Cattle> _streamController;
 
   // late DocumentSnapshot<Map<String,dynamic>> snapshot;
@@ -63,20 +71,29 @@ class _AnimalDetailsState extends State<AnimalDetails> {
   bool isDetailVisible = false;
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     Widget buildWidget(CattleHistory event) {
-      if (event.name == 'Abortion') {
+      if (event.name == currentLocalization['abortion']) {
         return Image.asset(
           'asset/Cross_img.png',
           width: 30,
           height: 35,
         );
-      } else if (event.name == 'Vaccination') {
+      } else if (event.name == currentLocalization['Vaccination']) {
         return Image.asset(
           'asset/Vaccination.png',
           width: 30,
           height: 35,
         );
-      } else if (event.name == 'Heifer') {
+      } else if (event.name == currentLocalization['Heifer']) {
         return Image.asset(
           'asset/heifer.png',
           width: 30,
@@ -130,8 +147,8 @@ class _AnimalDetailsState extends State<AnimalDetails> {
           stream: _streamController,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: Text('Please Wait ..'),
+              return  Center(
+                child: Text(currentLocalization['please_wait']??""),
               );
             } else if (snapshot.hasData) {
               _cattle = snapshot.requireData;
@@ -145,8 +162,8 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Events",
+                           Text(
+                            currentLocalization['events']??"",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -172,8 +189,8 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                           .black), // Set the border color here
                                 ),
                               ),
-                              child: const Text(
-                                "Add Event",
+                              child: Text(
+                                currentLocalization['add_event']??"",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold),
@@ -223,7 +240,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                       Expanded(
                                         flex: 12,
                                         child: Text(
-                                          " ${capitalizeFirstLetterOfEachWord(event.name)}",
+                                          " ${capitalizeFirstLetterOfEachWord(currentLocalization[event.name.toLowerCase()]??"")}",
                                           textAlign: TextAlign.left,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -275,10 +292,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                               });
                             },
                           ),
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.fromLTRB(12.0, 8, 12, 2),
                             child: Text(
-                              "Details",
+                              currentLocalization["details"]??"",
                               style: TextStyle(
                                   fontSize: 24,
                                   color: Color.fromRGBO(13, 166, 186, 1.0),
@@ -311,10 +328,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  const SizedBox(
+                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      "Age",
+                                      currentLocalization["age"]??"",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -344,10 +361,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  const SizedBox(
+                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      "Sex",
+                                      currentLocalization["sex"]??"",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -358,7 +375,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      _cattle.sex,
+                                      currentLocalization[_cattle.sex.toLowerCase()]??"",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -377,10 +394,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  const SizedBox(
+                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      "Weight",
+                                      currentLocalization["weight"]??"",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -410,10 +427,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  const SizedBox(
+                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      "Breed",
+                                      currentLocalization["breed"]??"",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -443,10 +460,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  const SizedBox(
+                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      "State",
+                                      currentLocalization["state"]??"",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -457,7 +474,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      _cattle.state,
+                                      currentLocalization[_cattle.state.toLowerCase()]??"",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -476,10 +493,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  const SizedBox(
+                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      "Source of Cattle",
+                                      currentLocalization["source_of_cattle"]??"",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
@@ -528,6 +545,9 @@ class EditAnimalDetail extends StatefulWidget {
 }
 
 class _EditAnimalDetailState extends State<EditAnimalDetail> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   final _formKey = GlobalKey<FormState>();
   // final TextEditingController _rfidTextController = TextEditingController();
   final TextEditingController _weightTextController = TextEditingController();
@@ -593,11 +613,21 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1.0),
       appBar: AppBar(
-        title: const Text(
-          'Edit Details',
+        title:  Text(
+          currentLocalization['Edit Details']??"",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -625,8 +655,8 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                 padding: const EdgeInsets.fromLTRB(5, 8, 5, 26),
                 child: DropdownButtonFormField<String>(
                   value: _selectedGender,
-                  decoration: const InputDecoration(
-                    labelText: 'Gender*',
+                  decoration: InputDecoration(
+                    labelText: '${currentLocalization['gender']??""}*',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -634,7 +664,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   items: genderOptions.map((String gender) {
                     return DropdownMenuItem<String>(
                       value: gender,
-                      child: Text(gender),
+                      child: Text(currentLocalization[gender.toLowerCase()]??""),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -657,8 +687,8 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   keyboardType: TextInputType.number,
                   // initialValue: '0',
                   controller: _ageTextController,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter The Age (Year)',
+                  decoration:  InputDecoration(
+                    labelText: '${currentLocalization['enter_the_age']??""}',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -671,8 +701,8 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   controller: _weightTextController,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter The Weight (Kg)',
+                  decoration: InputDecoration(
+                    labelText: '${currentLocalization['enter_the_weight']??""}',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -684,8 +714,9 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 26),
                 child: DropdownButtonFormField<String>(
                   value: _selectedSource,
-                  decoration: const InputDecoration(
-                    labelText: 'Source of Cattle*',
+                  decoration: InputDecoration(
+                    labelText: '${currentLocalization['source_of_cattle']??""}*',
+
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -693,7 +724,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   items: sourceOptions.map((String gender) {
                     return DropdownMenuItem<String>(
                       value: gender,
-                      child: Text(gender),
+                      child: Text(currentLocalization[gender]??""),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -714,8 +745,9 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 26),
                 child: TextFormField(
                   controller: _breedTextController,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter The Breed*',
+                  decoration:  InputDecoration(
+                    labelText: '${currentLocalization['enter_the_breed']??""}*',
+
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -733,8 +765,8 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 26),
                 child: DropdownButtonFormField<String>(
                   value: _selectedStage,
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
+                  decoration:  InputDecoration(
+                    labelText: currentLocalization['status']??"",
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -742,7 +774,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   items: stageOptions.map((String gender) {
                     return DropdownMenuItem<String>(
                       value: gender,
-                      child: Text(gender),
+                      child: Text(currentLocalization[gender.toLowerCase()]??""),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -763,9 +795,11 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                         updateCattleButton(context);
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                           SnackBar(
                               content: Text(
-                                  'Cattle Details updated Successfully!!')),
+                                  currentLocalization['Cattle Details updated Successfully!!']??"",
+                              )
+                        )
                         );
                       }
                     },
@@ -774,8 +808,8 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                         const Color.fromRGBO(13, 166, 186, 1.0),
                       ),
                     ),
-                    child: const Text(
-                      'Submit',
+                    child:  Text(
+                      currentLocalization['submit']??"",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -824,6 +858,9 @@ class AddEventPopup extends StatefulWidget {
 }
 
 class _AddEventPopupState extends State<AddEventPopup> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   String? selectedOption;
   List<String> eventOptionsFemale = [
     'Abortion',
@@ -852,7 +889,15 @@ class _AddEventPopupState extends State<AddEventPopup> {
   @override
   Widget build(BuildContext context) {
 
+    languageCode = Provider.of<AppData>(context).persistentVariable;
 
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -879,8 +924,8 @@ class _AddEventPopupState extends State<AddEventPopup> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const Text(
-            'Add Event',
+           Text(
+            currentLocalization['Add Event']??"",
             style: TextStyle(
               fontSize: 22.0,
               fontWeight: FontWeight.w600,
@@ -896,14 +941,14 @@ class _AddEventPopupState extends State<AddEventPopup> {
                   selectedOption = newValue;
                 });
               },
-              decoration: const InputDecoration(
-                hintText: 'Event Name',
+              decoration:  InputDecoration(
+                hintText: currentLocalization['Event Name']??"",
                 border: OutlineInputBorder(),
               ),
               items: eventNameOption.map((String option) {
                 return DropdownMenuItem<String>(
                   value: option,
-                  child: Text(option),
+                  child: Text(currentLocalization[option.toLowerCase()]??""),
                 );
               }).toList(),
             ),
@@ -928,8 +973,8 @@ class _AddEventPopupState extends State<AddEventPopup> {
                 });
               }
             },
-            decoration: const InputDecoration(
-              hintText: 'Event Date',
+            decoration:  InputDecoration(
+              hintText: currentLocalization['Event Date']??"",
               border: OutlineInputBorder(),
             ),
           ),
@@ -966,8 +1011,8 @@ class _AddEventPopupState extends State<AddEventPopup> {
                 const Color.fromRGBO(13, 166, 186, 0.6),
               ),
             ),
-            child: const Text(
-              'Submit',
+            child: Text(
+              currentLocalization['submit']??"",
               style: TextStyle(color: Colors.white),
             ),
           ),

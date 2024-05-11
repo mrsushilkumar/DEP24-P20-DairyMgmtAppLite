@@ -3,6 +3,12 @@ import 'package:farm_expense_mangement_app/screens/home/animaldetails.dart';
 import 'package:farm_expense_mangement_app/screens/home/newcattle.dart';
 import 'package:farm_expense_mangement_app/services/database/cattledatabase.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../main.dart';
+import 'homepage.dart';
+import 'localisations_en.dart';
+import 'localisations_hindi.dart';
+import 'localisations_punjabi.dart';
 
 class AnimalList extends StatefulWidget {
   const AnimalList({super.key});
@@ -12,6 +18,9 @@ class AnimalList extends StatefulWidget {
 }
 
 class _AnimalListState extends State<AnimalList> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
+
   // final user = FirebaseAuth.instance.currentUser;
   // final uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -56,6 +65,15 @@ class _AnimalListState extends State<AnimalList> {
 
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
     List<Cattle> filteredCattle = allCattle;
 
     if (_selectedStates.isNotEmpty) {
@@ -84,8 +102,8 @@ class _AnimalListState extends State<AnimalList> {
       backgroundColor: const Color.fromRGBO(240, 255, 255, 1),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          'Cattles',
+        title:  Text(
+          currentLocalization['cattles'] ?? '',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
           textAlign: TextAlign.center,
         ),
@@ -165,21 +183,21 @@ class _AnimalListState extends State<AnimalList> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Text(
-                    'Filter Options',
+                   Text(
+                     currentLocalization['filter_options']??'',
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   _buildFilterOption(
-                    'State:',
+                    currentLocalization['state']??'',
                     [
-                      'Milked',
-                      'Heifer',
-                      'Insemination',
-                      'Abortion',
-                      'Dry',
-                      'Calved'
+                      currentLocalization['milked']??'',
+                      currentLocalization['heifer']??'',
+                      currentLocalization['insemination']??'',
+                      currentLocalization['abortion']??'',
+                      currentLocalization['dry']??'',
+                      currentLocalization['calved']??'',
                     ],
                     _selectedStates,
                     (selectedOptions) {
@@ -190,8 +208,8 @@ class _AnimalListState extends State<AnimalList> {
                   ),
                   const SizedBox(height: 16),
                   _buildFilterOption(
-                    'Gender:',
-                    ['Male', 'Female'],
+                    currentLocalization['gender']??'',
+                    [currentLocalization['male']??'', currentLocalization['female']??'',],
                     _selectedGenders,
                     (selectedOptions) {
                       setState(() {
@@ -216,8 +234,8 @@ class _AnimalListState extends State<AnimalList> {
                           side: const BorderSide(
                               color: Colors.black), // Add border
                         ),
-                        child: const Text(
-                          'Confirm Filters',
+                        child:  Text(
+                          currentLocalization['confirm_filters']??'',
                           style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
@@ -236,8 +254,8 @@ class _AnimalListState extends State<AnimalList> {
                           side: const BorderSide(
                               color: Colors.black), // Add border
                         ),
-                        child: const Text(
-                          'Clear Filters',
+                        child: Text(
+                          currentLocalization['clear_filters']??'',
                           style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
@@ -455,8 +473,20 @@ class CattleListItem extends StatefulWidget {
 }
 
 class _CattleListItemState extends State<CattleListItem> {
+  late Map<String, String> currentLocalization= {};
+  late String languageCode = 'en';
   @override
   Widget build(BuildContext context) {
+    languageCode = Provider.of<AppData>(context).persistentVariable;
+
+    if (languageCode == 'en') {
+      currentLocalization = LocalizationEn.translations;
+    } else if (languageCode == 'hi') {
+      currentLocalization = LocalizationHi.translations;
+    } else if (languageCode == 'pa') {
+      currentLocalization = LocalizationPun.translations;
+    }
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Card(
@@ -512,7 +542,7 @@ class _CattleListItemState extends State<CattleListItem> {
                     ),
             ),
             title: Text(
-              'RF id : ${widget.cattle.rfid}',
+              "${currentLocalization['rf_id'] ?? ''} : ${widget.cattle.rfid}",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -521,11 +551,11 @@ class _CattleListItemState extends State<CattleListItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Breed:${widget.cattle.breed}",
+                  "${currentLocalization['breed'] ?? ''}:${widget.cattle.breed}",
                   // style: TextStyle(color: Colors.amber[800]),
                 ),
                 Text(
-                  "Sex:${widget.cattle.sex}",
+                  "${currentLocalization['sex'] ?? ''}:${currentLocalization[widget.cattle.sex.toLowerCase()] ?? ''}",
                   // style: TextStyle(color: Colors.pinkAccent[400]),
                 )
               ],
