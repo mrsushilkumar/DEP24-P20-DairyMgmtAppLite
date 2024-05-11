@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../home/homepage.dart';
 import 'expenses.dart';
 import 'income.dart';
-import '../../main.dart';
 import '../home/localisations_en.dart';
 import '../home/localisations_hindi.dart';
 import '../home/localisations_punjabi.dart';
@@ -84,7 +83,7 @@ class _TransactionPageState extends State<TransactionPage> {
         backgroundColor: const Color.fromRGBO(13, 152, 186, 1.0),
         title: Text(
           currentLocalization['transactions']??"",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -168,7 +167,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       child:  Center(
                         child: Text(
                           currentLocalization['income']??"",
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
                     ),
@@ -197,7 +196,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       child: Center(
                         child: Text(
                           currentLocalization['expenses']??"",
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
                     ),
@@ -531,7 +530,7 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
         backgroundColor: const Color.fromRGBO(13, 152, 186, 1.0),
         title:  Text(
           currentLocalization['total_transactions']??'',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(
@@ -541,7 +540,7 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '${currentLocalization["date_range"]} ${selectedStartDate != null ? "${selectedStartDate!.day}/${selectedStartDate!.month}/${selectedStartDate!.year}" : ""} - ${selectedEndDate != null ? "${selectedEndDate!.day}/${selectedEndDate!.month}/${selectedEndDate!.year}" : ""}',
+              '${currentLocalization["date_range"]} ${selectedStartDate != null ? "${startDatePrint!.day}/${startDatePrint.month}/${startDatePrint.year}" : ""} - ${selectedEndDate != null ? "${endDatePrint!.day}/${endDatePrint.month}/${endDatePrint.year}" : ""}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -553,7 +552,7 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
             const SizedBox(height: 7),
              Text(
               '${currentLocalization["income_per_category"]}',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             ...incomePerCategory.entries.map((entry) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
@@ -575,7 +574,7 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
             const SizedBox(height: 7),
              Text(
               '${currentLocalization["expense_per_category"]}',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             ...expensePerCategory.entries.map((entry) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),

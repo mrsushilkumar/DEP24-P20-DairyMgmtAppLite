@@ -27,7 +27,7 @@ class LanguagePopup  {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Select Language'),
+          title: const Text('Select Language'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -55,7 +55,7 @@ class LanguagePopup  {
         padding: const EdgeInsets.all(8.0),
         child: Text(
           language,
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
       ),
     );

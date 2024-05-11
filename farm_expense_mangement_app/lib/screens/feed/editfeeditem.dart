@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:farm_expense_mangement_app/models/feed.dart';
 import 'package:farm_expense_mangement_app/services/database/feeddatabase.dart';
 import 'package:provider/provider.dart';
-import '../../main.dart';
 import '../home/homepage.dart';
 import '../home/localisations_en.dart';
 import '../home/localisations_hindi.dart';
@@ -127,7 +126,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
         title:  Text(
           currentLocalization['edit_feed_item']??"",
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
@@ -151,7 +150,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                   controller: _itemNameController,
                   decoration:  InputDecoration(
                       labelText:  currentLocalization['item_name']??"",
-                      labelStyle: TextStyle(fontSize: 20, color: Colors.black)),
+                      labelStyle: const TextStyle(fontSize: 20, color: Colors.black)),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter item name';
@@ -261,7 +260,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                     ),
                     child:  Text(
                       currentLocalization['delete']??"",
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -275,7 +274,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                     ),
                     child:  Text(
                       currentLocalization['save']??"",
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),

@@ -2,7 +2,6 @@ import 'package:farm_expense_mangement_app/screens/home/milkavgpage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../main.dart';
 import '../../../models/milk.dart';
 import '../../../services/database/milkdatabase.dart';
 import '../homepage.dart';
@@ -83,7 +82,7 @@ class _MilkByDatePageState extends State<MilkByDatePage> {
         title: Center(
           child: Text(
             currentLocalization['milk_records']??"",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         actions: [

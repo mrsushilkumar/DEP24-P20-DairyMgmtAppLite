@@ -8,7 +8,7 @@ import '../../models/cattle.dart';
 
 Future<List<Cattle>> getCattleFromDatabase() async {
   final Database db = await initDatabase();
-  final List<Map<String, dynamic>> items = await db.query('cattles',);
+  final List<Map<String, dynamic>> items = await db.query('cattles',orderBy: 'rfid ASC');
   return List.generate(items.length, (index) {
     return Cattle(
         rfid: items[index]['rfid'],
@@ -23,7 +23,7 @@ Future<List<Cattle>> getCattleFromDatabase() async {
 
 Future<List<Cattle>> getFemaleCattleFromDatabase() async {
   final Database db = await initDatabase();
-  final List<Map<String, dynamic>> items = await db.query('cattles',where : 'sex = ?', whereArgs: ['Female']);
+  final List<Map<String, dynamic>> items = await db.query('cattles',where : 'sex = ?', whereArgs: ['Female'],orderBy: 'rfid ASC');
   return List.generate(items.length, (index) {
     return Cattle(
         rfid: items[index]['rfid'],

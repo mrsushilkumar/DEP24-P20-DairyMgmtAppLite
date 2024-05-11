@@ -9,7 +9,6 @@ import '../../models/cattle.dart';
 import '../../services/database/cattledatabase.dart';
 import 'package:farm_expense_mangement_app/models/history.dart';
 import 'package:farm_expense_mangement_app/services/database/cattlehistorydatabase.dart';
-import '../../main.dart';
 import 'homepage.dart';
 import 'localisations_en.dart';
 import 'localisations_hindi.dart';
@@ -164,7 +163,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                         children: [
                            Text(
                             currentLocalization['events']??"",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                           ElevatedButton(
@@ -191,7 +190,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                               ),
                               child: Text(
                                 currentLocalization['add_event']??"",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold),
                               )
@@ -293,10 +292,10 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                             },
                           ),
                            Padding(
-                            padding: EdgeInsets.fromLTRB(12.0, 8, 12, 2),
+                            padding: const EdgeInsets.fromLTRB(12.0, 8, 12, 2),
                             child: Text(
                               currentLocalization["details"]??"",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 24,
                                   color: Color.fromRGBO(13, 166, 186, 1.0),
                                   fontWeight: FontWeight.bold),
@@ -332,7 +331,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                     width: 100,
                                     child: Text(
                                       currentLocalization["age"]??"",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                         fontSize: 20,
@@ -365,7 +364,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                     width: 100,
                                     child: Text(
                                       currentLocalization["sex"]??"",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                         fontSize: 20,
@@ -398,7 +397,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                     width: 100,
                                     child: Text(
                                       currentLocalization["weight"]??"",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                         fontSize: 20,
@@ -431,7 +430,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                     width: 100,
                                     child: Text(
                                       currentLocalization["breed"]??"",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                         fontSize: 20,
@@ -464,7 +463,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                     width: 100,
                                     child: Text(
                                       currentLocalization["state"]??"",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                         fontSize: 20,
@@ -497,7 +496,7 @@ class _AnimalDetailsState extends State<AnimalDetails> {
                                     width: 100,
                                     child: Text(
                                       currentLocalization["source_of_cattle"]??"",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                         fontSize: 20,
@@ -584,7 +583,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
     super.initState();
 
     _selectedGender = widget.cattle.sex;
-    _selectedStage = widget.cattle.state;
+    // _selectedStage = widget.cattle.state;
     _selectedSource = widget.cattle.source;
     _breedTextController.text = widget.cattle.breed;
     _weightTextController.text = widget.cattle.weight.toString();
@@ -598,7 +597,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
         breed: _breedTextController.text,
         sex: _selectedGender.toString(),
         weight: int.parse(_weightTextController.text),
-        state: _selectedStage.toString());
+        state: (_selectedGender.toString() == 'Female') ? _selectedStage.toString() : 'NA');
 
     updateCattleInDatabase(cattle);
 
@@ -628,7 +627,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
       appBar: AppBar(
         title:  Text(
           currentLocalization['Edit Details']??"",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
@@ -657,9 +656,9 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   value: _selectedGender,
                   decoration: InputDecoration(
                     labelText: '${currentLocalization['gender']??""}*',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Color.fromRGBO(240, 255, 255, 0.7),
+                    fillColor: const Color.fromRGBO(240, 255, 255, 0.7),
                   ),
                   items: genderOptions.map((String gender) {
                     return DropdownMenuItem<String>(
@@ -680,6 +679,30 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   },
                 ),
               ),
+              if(_selectedGender == 'Female')
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 26),
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedStage,
+                    decoration:  InputDecoration(
+                      labelText: currentLocalization['status']??"",
+                      border: const OutlineInputBorder(),
+                      filled: true,
+                      fillColor: const Color.fromRGBO(240, 255, 255, 0.7),
+                    ),
+                    items: stageOptions.map((String gender) {
+                      return DropdownMenuItem<String>(
+                        value: gender,
+                        child: Text(currentLocalization[gender.toLowerCase()]??""),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedStage = value;
+                      });
+                    },
+                  ),
+                ),
               // SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 26),
@@ -688,10 +711,10 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   // initialValue: '0',
                   controller: _ageTextController,
                   decoration:  InputDecoration(
-                    labelText: '${currentLocalization['enter_the_age']??""}',
-                    border: OutlineInputBorder(),
+                    labelText: currentLocalization['enter_the_age']??"",
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Color.fromRGBO(240, 255, 255, 0.7),
+                    fillColor: const Color.fromRGBO(240, 255, 255, 0.7),
                   ),
                 ),
               ),
@@ -702,10 +725,10 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   keyboardType: TextInputType.number,
                   controller: _weightTextController,
                   decoration: InputDecoration(
-                    labelText: '${currentLocalization['enter_the_weight']??""}',
-                    border: OutlineInputBorder(),
+                    labelText: currentLocalization['enter_the_weight']??"",
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Color.fromRGBO(240, 255, 255, 0.7),
+                    fillColor: const Color.fromRGBO(240, 255, 255, 0.7),
                   ),
                 ),
               ),
@@ -717,9 +740,9 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   decoration: InputDecoration(
                     labelText: '${currentLocalization['source_of_cattle']??""}*',
 
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Color.fromRGBO(240, 255, 255, 0.7),
+                    fillColor: const Color.fromRGBO(240, 255, 255, 0.7),
                   ),
                   items: sourceOptions.map((String gender) {
                     return DropdownMenuItem<String>(
@@ -748,9 +771,9 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   decoration:  InputDecoration(
                     labelText: '${currentLocalization['enter_the_breed']??""}*',
 
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Color.fromRGBO(240, 255, 255, 0.7),
+                    fillColor: const Color.fromRGBO(240, 255, 255, 0.7),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -761,29 +784,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.fromLTRB(5, 0, 5, 26),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedStage,
-                  decoration:  InputDecoration(
-                    labelText: currentLocalization['status']??"",
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Color.fromRGBO(240, 255, 255, 0.7),
-                  ),
-                  items: stageOptions.map((String gender) {
-                    return DropdownMenuItem<String>(
-                      value: gender,
-                      child: Text(currentLocalization[gender.toLowerCase()]??""),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedStage = value;
-                    });
-                  },
-                ),
-              ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 26),
                 child: Center(
@@ -810,7 +811,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                     ),
                     child:  Text(
                       currentLocalization['submit']??"",
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 16),
@@ -926,7 +927,7 @@ class _AddEventPopupState extends State<AddEventPopup> {
         children: <Widget>[
            Text(
             currentLocalization['Add Event']??"",
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 22.0,
               fontWeight: FontWeight.w600,
             ),
@@ -943,7 +944,7 @@ class _AddEventPopupState extends State<AddEventPopup> {
               },
               decoration:  InputDecoration(
                 hintText: currentLocalization['Event Name']??"",
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               items: eventNameOption.map((String option) {
                 return DropdownMenuItem<String>(
@@ -975,7 +976,7 @@ class _AddEventPopupState extends State<AddEventPopup> {
             },
             decoration:  InputDecoration(
               hintText: currentLocalization['Event Date']??"",
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 20.0),
@@ -1013,7 +1014,7 @@ class _AddEventPopupState extends State<AddEventPopup> {
             ),
             child: Text(
               currentLocalization['submit']??"",
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],

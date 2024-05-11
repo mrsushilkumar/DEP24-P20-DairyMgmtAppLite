@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 
 import '../../models/feed.dart';
-import '../../main.dart';
 import '../home/homepage.dart';
 import '../home/localisations_en.dart';
 import '../home/localisations_hindi.dart';
@@ -88,7 +87,7 @@ class _AddFeedItemState extends State<AddFeedItem> {
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
         title: Text(
           currentLocalization['add_feed_item']??"",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
       body: Padding(
@@ -101,9 +100,9 @@ class _AddFeedItemState extends State<AddFeedItem> {
                 controller: _itemNameController,
                 decoration:  InputDecoration(
                   labelText: currentLocalization['item_name']??"",
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   filled: true,
-                  fillColor: Color.fromRGBO(240, 255, 255, 1),
+                  fillColor: const Color.fromRGBO(240, 255, 255, 1),
                 ),
               ),
             ),
@@ -114,9 +113,9 @@ class _AddFeedItemState extends State<AddFeedItem> {
 
                 decoration:  InputDecoration(
                   labelText: currentLocalization['quantity']??"",
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   filled: true,
-                  fillColor: Color.fromRGBO(240, 255, 255, 1),
+                  fillColor: const Color.fromRGBO(240, 255, 255, 1),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -128,9 +127,9 @@ class _AddFeedItemState extends State<AddFeedItem> {
 
                 decoration:  InputDecoration(
                   labelText: currentLocalization['required_quantity']??"",
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   filled: true,
-                  fillColor: Color.fromRGBO(240, 255, 255, 1),
+                  fillColor: const Color.fromRGBO(240, 255, 255, 1),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -141,9 +140,9 @@ class _AddFeedItemState extends State<AddFeedItem> {
                 controller: _categoryDateController,
                 decoration: InputDecoration(
                   labelText: currentLocalization['category']??"",
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   filled: true,
-                  fillColor: Color.fromRGBO(240, 255, 255, 1),
+                  fillColor: const Color.fromRGBO(240, 255, 255, 1),
                 ),
               ),
             ),
@@ -178,7 +177,7 @@ class _AddFeedItemState extends State<AddFeedItem> {
               child:  Text(
                 currentLocalization['save']??"",
                 style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
             ),
           ],

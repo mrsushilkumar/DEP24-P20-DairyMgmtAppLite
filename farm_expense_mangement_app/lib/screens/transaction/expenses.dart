@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../services/database/transactiondatabase.dart';
-import '../../main.dart';
 import '../home/homepage.dart';
 import '../home/localisations_en.dart';
 import '../home/localisations_hindi.dart';
@@ -88,7 +87,7 @@ class _AddExpensesState extends State<AddExpenses> {
       appBar: AppBar(
         title:  Text(
           '${currentLocalization['new_expense']}',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: const Color.fromRGBO(13, 166, 186, 1.0),
@@ -138,9 +137,9 @@ class _AddExpensesState extends State<AddExpenses> {
                         keyboardType: TextInputType.number,
                         controller: _amountTextController,
                         decoration: InputDecoration(
-                          labelText: '${currentLocalization['how_much_did_you_spend']}', border: OutlineInputBorder(),
+                          labelText: '${currentLocalization['how_much_did_you_spend']}', border: const OutlineInputBorder(),
                           filled: true,
-                          fillColor: Color.fromRGBO(240, 255, 255, 1),
+                          fillColor: const Color.fromRGBO(240, 255, 255, 1),
 
                         ),
                       ),
@@ -152,9 +151,9 @@ class _AddExpensesState extends State<AddExpenses> {
                         value: _selectedCategory,
                         decoration: InputDecoration(
                           labelText: '${currentLocalization['select_expense_type']}*',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           filled: true,
-                          fillColor: Color.fromRGBO(240, 255, 255, 1),
+                          fillColor: const Color.fromRGBO(240, 255, 255, 1),
 
                         ),
                         items: sourceOptions.map((String source) {
@@ -178,9 +177,9 @@ class _AddExpensesState extends State<AddExpenses> {
                           controller: _categoryTextController,
                           decoration:  InputDecoration(
                             labelText: '${currentLocalization['enter_category']}',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
                             filled: true,
-                            fillColor: Color.fromRGBO(240, 255, 255, 1),
+                            fillColor: const Color.fromRGBO(240, 255, 255, 1),
 
                           ),
                         ),
@@ -217,7 +216,7 @@ class _AddExpensesState extends State<AddExpenses> {
                         ),
                         child:  Text(
                           '${currentLocalization['submit']}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color:Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 15

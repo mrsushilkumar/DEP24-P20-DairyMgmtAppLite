@@ -4,7 +4,6 @@ import 'package:farm_expense_mangement_app/screens/home/newcattle.dart';
 import 'package:farm_expense_mangement_app/services/database/cattledatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../main.dart';
 import 'homepage.dart';
 import 'localisations_en.dart';
 import 'localisations_hindi.dart';
@@ -104,7 +103,7 @@ class _AnimalListState extends State<AnimalList> {
         iconTheme: const IconThemeData(color: Colors.black),
         title:  Text(
           currentLocalization['cattles'] ?? '',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -186,7 +185,7 @@ class _AnimalListState extends State<AnimalList> {
                    Text(
                      currentLocalization['filter_options']??'',
                     style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                        const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   _buildFilterOption(
@@ -236,7 +235,7 @@ class _AnimalListState extends State<AnimalList> {
                         ),
                         child:  Text(
                           currentLocalization['confirm_filters']??'',
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -256,7 +255,7 @@ class _AnimalListState extends State<AnimalList> {
                         ),
                         child: Text(
                           currentLocalization['clear_filters']??'',
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),

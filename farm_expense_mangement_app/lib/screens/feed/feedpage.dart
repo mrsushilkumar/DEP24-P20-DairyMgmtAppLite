@@ -5,7 +5,6 @@ import 'package:farm_expense_mangement_app/services/database/feeddatabase.dart';
 
 import 'package:farm_expense_mangement_app/screens/feed/editfeeditem.dart';
 import 'package:provider/provider.dart';
-import '../../main.dart';
 import '../home/homepage.dart';
 import '../home/localisations_en.dart';
 import '../home/localisations_hindi.dart';
@@ -103,7 +102,7 @@ class _FeedState extends State<FeedPage> {
         iconTheme: const IconThemeData(color: Colors.black),
         title:  Text(
           currentLocalization['feed']??"",
-          style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+          style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,

@@ -5,7 +5,6 @@ import 'package:farm_expense_mangement_app/screens/transaction/transactionpage.d
 import 'package:farm_expense_mangement_app/services/database/transactiondatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../main.dart';
 import '../home/homepage.dart';
 import '../home/localisations_en.dart';
 import '../home/localisations_hindi.dart';
@@ -160,7 +159,7 @@ class _EditTransactionState extends State<EditTransaction> {
                   readOnly: true,
                   enabled: false,
                   style: const TextStyle(fontSize: 20, color: Colors.black),
-                  initialValue:(widget.showIncome) ? '${currentLocalization[widget?.sale?.name]}' : '${currentLocalization[widget?.expense?.name]}',
+                  initialValue:(widget.showIncome) ? '${currentLocalization[widget.sale?.name]}' : '${currentLocalization[widget.expense?.name]}',
                   decoration: InputDecoration(
 
                       labelText: (widget.showIncome) ? '${currentLocalization['income_category']}' : '${currentLocalization['expense_category']}',
@@ -183,7 +182,7 @@ class _EditTransactionState extends State<EditTransaction> {
                   initialValue: '${_dateOfTransaction.year}-${_dateOfTransaction.month}-${_dateOfTransaction.day}',
                   decoration:  InputDecoration(
                       labelText: '${currentLocalization['transaction_date']}',
-                      labelStyle: TextStyle(fontSize: 20, color: Colors.black)),
+                      labelStyle: const TextStyle(fontSize: 20, color: Colors.black)),
 
                 ),
               ),
@@ -269,7 +268,7 @@ class _EditTransactionState extends State<EditTransaction> {
                     ),
                     child:  Text(
                       currentLocalization['delete']??"",
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -283,7 +282,7 @@ class _EditTransactionState extends State<EditTransaction> {
                     ),
                     child: Text(
                       currentLocalization['save']??"",
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
