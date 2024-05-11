@@ -531,7 +531,7 @@ class _TotalTransactionPageState extends State<TotalTransactionPage> {
             Text(
               netProfit>=0?
               'Net Profit: ₹$netProfit':
-    'Net Loss',
+    'Net Loss: ₹${-netProfit}',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

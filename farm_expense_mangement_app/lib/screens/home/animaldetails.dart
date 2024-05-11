@@ -658,7 +658,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   // initialValue: '0',
                   controller: _ageTextController,
                   decoration: const InputDecoration(
-                    labelText: 'Enter The Age',
+                    labelText: 'Enter The Age (Year)',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -672,7 +672,7 @@ class _EditAnimalDetailState extends State<EditAnimalDetail> {
                   keyboardType: TextInputType.number,
                   controller: _weightTextController,
                   decoration: const InputDecoration(
-                    labelText: 'Enter The Weight',
+                    labelText: 'Enter The Weight (Kg)',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -825,18 +825,34 @@ class AddEventPopup extends StatefulWidget {
 
 class _AddEventPopupState extends State<AddEventPopup> {
   String? selectedOption;
-  List<String> eventOptions = [
+  List<String> eventOptionsFemale = [
     'Abortion',
     'Vaccination',
     'Heifer',
     'Insemination'
   ];
+  List<String> eventOptionsMale = [
+    'Vaccination',
+  ];
   DateTime? selectedDate;
+
+  List<String> eventNameOption = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    eventNameOption = (widget.cattle.sex == 'Female') ? eventOptionsFemale : eventOptionsMale;
+
+  }
 
   // final AnimalDetails detail=AnimalDetails(rfid);
 
   @override
   Widget build(BuildContext context) {
+
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -884,7 +900,7 @@ class _AddEventPopupState extends State<AddEventPopup> {
                 hintText: 'Event Name',
                 border: OutlineInputBorder(),
               ),
-              items: eventOptions.map((String option) {
+              items: eventNameOption.map((String option) {
                 return DropdownMenuItem<String>(
                   value: option,
                   child: Text(option),

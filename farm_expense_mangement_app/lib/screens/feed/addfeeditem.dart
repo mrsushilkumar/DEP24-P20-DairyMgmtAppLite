@@ -94,7 +94,7 @@ class _AddFeedItemState extends State<AddFeedItem> {
               child: TextField(
                 controller: _quantityController,
                 decoration: const InputDecoration(
-                  labelText: 'Quantity',
+                  labelText: 'Quantity (unit)',
                   border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Color.fromRGBO(240, 255, 255, 1),
@@ -107,7 +107,7 @@ class _AddFeedItemState extends State<AddFeedItem> {
               child: TextField(
                 controller: _requiredQuantityController,
                 decoration: const InputDecoration(
-                  labelText: 'Required Quantity',
+                  labelText: 'Required Quantity (unit)',
                   border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Color.fromRGBO(240, 255, 255, 1),

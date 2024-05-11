@@ -238,7 +238,7 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
                     milkInMorning = double.tryParse(value);
                   },
                   decoration: const InputDecoration(
-                    labelText: 'Morning Milk',
+                    labelText: 'Morning Milk (Ltr.)',
                     border: InputBorder.none,
                   ),
                 ),
@@ -250,7 +250,7 @@ class _AddMilkDataPageState extends State<AddMilkDataPage> {
                     milkInEvening = double.tryParse(value);
                   },
                   decoration: const InputDecoration(
-                    labelText: 'Evening Milk',
+                    labelText: 'Evening Milk (Ltr.)',
                     border: InputBorder.none,
                   ),
                 ),

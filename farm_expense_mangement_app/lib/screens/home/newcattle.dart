@@ -16,7 +16,7 @@ class _AddNewCattleState extends State<AddNewCattle> {
   final TextEditingController _rfidTextController = TextEditingController();
   final TextEditingController _weightTextController = TextEditingController();
   final TextEditingController _breedTextController = TextEditingController();
-  final TextEditingController _agetextController = TextEditingController();
+  final TextEditingController _ageTextController = TextEditingController();
 
   // final TextEditingController _tagNumberController3 = TextEditingController();
 
@@ -41,34 +41,21 @@ class _AddNewCattleState extends State<AddNewCattle> {
     'Calved'
   ];
 
-  // Future<void> _selectDate(BuildContext context) async {
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.now(),
-  //     firstDate: DateTime(1900),
-  //     lastDate: DateTime.now(),
-  //   );
-  //   if (picked != null && picked.day.toString() != _birthDateController.text) {
-  //     setState(() {
-  //       _birthDateController.text = picked.toString().split(' ')[0];
-  //     });
-  //   }
-  // }
-
 
   void addNewCattleButton(BuildContext context) {
 
     final cattle = Cattle(
         rfid: _rfidTextController.text,
-        age: _agetextController.text.isNotEmpty
-            ? int.parse(_agetextController.text)
+        age: _ageTextController.text.isNotEmpty
+            ? int.parse(_ageTextController.text)
             : 0,
         breed: _breedTextController.text,
         sex: _selectedGender != null ? _selectedGender! : '',
         weight: _weightTextController.text.isNotEmpty
             ? int.parse(_weightTextController.text)
             : 0,
-        state: _selectedState != null ? _selectedState! : '');
+        state: (_selectedGender == 'Female') ? (_selectedState != null ? _selectedState! : '') : 'NA'
+    );
 
     addCattleToDatabase(cattle);
 
@@ -170,15 +157,40 @@ class _AddNewCattleState extends State<AddNewCattle> {
                   },
                 ),
               ),
+
+              if(_selectedGender == 'Female')
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 26),
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedState,
+                    decoration: const InputDecoration(
+                      labelText: 'Status',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Color.fromRGBO(240, 255, 255, 0.7),
+                    ),
+                    items: stateOptions.map((String stage) {
+                      return DropdownMenuItem<String>(
+                        value: stage,
+                        child: Text(stage),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedState = value;
+                      });
+                    },
+                  ),
+                ),
               // SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 26),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   // initialValue: '0',
-                  controller: _agetextController,
+                  controller: _ageTextController,
                   decoration: const InputDecoration(
-                    labelText: 'Enter The Age',
+                    labelText: 'Enter The Age (Year)',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -193,7 +205,7 @@ class _AddNewCattleState extends State<AddNewCattle> {
                   // initialValue: '0',
                   controller: _weightTextController,
                   decoration: const InputDecoration(
-                    labelText: 'Enter The Weight',
+                    labelText: 'Enter The Weight (Kg)',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Color.fromRGBO(240, 255, 255, 0.7),
@@ -249,29 +261,7 @@ class _AddNewCattleState extends State<AddNewCattle> {
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 26),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedState,
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Color.fromRGBO(240, 255, 255, 0.7),
-                  ),
-                  items: stateOptions.map((String stage) {
-                    return DropdownMenuItem<String>(
-                      value: stage,
-                      child: Text(stage),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedState = value;
-                    });
-                  },
-                ),
-              ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 26),
                 child: Center(

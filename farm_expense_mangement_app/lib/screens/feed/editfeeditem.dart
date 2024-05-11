@@ -164,7 +164,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                 ),
                 child: TextFormField(
                   controller: _needController,
-                  decoration: const InputDecoration(labelText: 'Need'),
+                  decoration: const InputDecoration(labelText: 'Need (unit)'),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -186,7 +186,7 @@ class _EditFeedItemPageState extends State<EditFeedItemPage> {
                 ),
                 child: TextFormField(
                   controller: _stockController,
-                  decoration: const InputDecoration(labelText: 'Stock'),
+                  decoration: const InputDecoration(labelText: 'Stock (unit)'),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {

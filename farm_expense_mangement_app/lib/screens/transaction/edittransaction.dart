@@ -144,7 +144,7 @@ class _EditTransactionState extends State<EditTransaction> {
                   style: const TextStyle(fontSize: 20, color: Colors.black),
                   controller: _categoryTransaction,
                   decoration: InputDecoration(
-                      labelText: (widget.showIncome) ? 'Income Category' : 'Expense Category',
+                      labelText: (widget.showIncome) ? 'Income Category ' : 'Expense Category ',
                       labelStyle: const TextStyle(fontSize: 20, color: Colors.black)),
 
                 ),
@@ -176,7 +176,7 @@ class _EditTransactionState extends State<EditTransaction> {
                 ),
                 child: TextFormField(
                   controller: _valueController,
-                  decoration: const InputDecoration(labelText: 'Enter Transaction Amount'),
+                  decoration: const InputDecoration(labelText: 'Enter Transaction Amount (₹)'),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
